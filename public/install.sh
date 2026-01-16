@@ -558,7 +558,7 @@ warn_shell_path_missing_dir() {
     echo -e "This can make ${INFO}clawdbot${NC} show as “command not found” in new terminals."
     echo -e "Fix (zsh: ~/.zshrc, bash: ~/.bashrc):"
     echo -e "  export PATH=\"${dir}:\\$PATH\""
-    echo -e "Docs: ${INFO}https://docs.clawd.bot/install/node${NC}"
+    echo -e "Docs: ${INFO}https://docs.clawd.bot/install#nodejs--npm-path-sanity${NC}"
 }
 
 ensure_npm_global_bin_on_path() {
@@ -578,7 +578,7 @@ maybe_nodenv_rehash() {
 warn_clawdbot_not_found() {
     echo -e "${WARN}→${NC} Installed, but ${INFO}clawdbot${NC} is not discoverable on PATH in this shell."
     echo -e "Try: ${INFO}hash -r${NC} (bash) or ${INFO}rehash${NC} (zsh), then retry."
-    echo -e "Docs: ${INFO}https://docs.clawd.bot/install/node${NC}"
+    echo -e "Docs: ${INFO}https://docs.clawd.bot/install#nodejs--npm-path-sanity${NC}"
     local t=""
     t="$(type -t clawdbot 2>/dev/null || true)"
     if [[ "$t" == "alias" || "$t" == "function" ]]; then
