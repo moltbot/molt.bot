@@ -1583,6 +1583,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
     .code-header {
       flex-wrap: wrap;
       gap: 8px;
+      min-height: 72px; /* Prevent layout shift when switches are hidden */
     }
 
     .code-dot {
@@ -1616,6 +1617,15 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
     .pm-btn {
       padding: 4px 8px;
       font-size: 0.65rem;
+    }
+
+    .code-content {
+      padding: 12px 14px;
+      font-size: 0.75rem;
+    }
+
+    .code-line {
+      gap: 6px;
     }
 
     .macos-download-btn {
