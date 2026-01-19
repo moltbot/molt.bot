@@ -69,6 +69,10 @@ const categoryLabels: Record<string, string> = {
       </div>
     </section>
 
+    <p class="more-examples">
+      Looking for more? Check out <a href="https://docs.clawd.bot/start/showcase" target="_blank" rel="noopener">even more examples in our docs</a> →
+    </p>
+
     <footer class="footer">
       <nav class="footer-nav">
         <a href="/">Home</a>
@@ -344,6 +348,22 @@ const categoryLabels: Record<string, string> = {
   .cta-secondary:hover {
     background: rgba(88, 101, 242, 0.25);
     transform: translateY(-2px);
+  }
+
+  .more-examples {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+  }
+
+  .more-examples a {
+    color: var(--cyan-bright);
+    text-decoration: none;
+  }
+
+  .more-examples a:hover {
+    text-decoration: underline;
   }
 
   .footer {
