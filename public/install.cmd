@@ -60,6 +60,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 set "TMP=%TEMP%\clawdbot-install.ps1"
+REM TMP may include spaces; always quote "%TMP%" when used.
 curl -fsSL "https://clawd.bot/install.ps1" -o "%TMP%"
 if %ERRORLEVEL% neq 0 (
   echo Failed to download install.ps1 >&2
@@ -71,6 +72,7 @@ if "%NO_ONBOARD%"=="1" set "PS_ARGS=%PS_ARGS% -NoOnboard"
 if "%NO_GIT_UPDATE%"=="1" set "PS_ARGS=%PS_ARGS% -NoGitUpdate"
 if "%DRY_RUN%"=="1" set "PS_ARGS=%PS_ARGS% -DryRun"
 
+if "%DRY_RUN%"=="1" echo [OK] Dry run ^(delegating to install.ps1^)
 powershell -NoProfile -ExecutionPolicy Bypass -File "%TMP%" %PS_ARGS%
 set "RESULT=%ERRORLEVEL%"
 
