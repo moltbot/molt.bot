@@ -27,15 +27,20 @@ REPO_DIR="/tmp/clawdbot-src"
 rm -rf "$REPO_DIR"
 git clone --depth 1 https://github.com/clawdbot/clawdbot.git "$REPO_DIR"
 
-echo "==> Verify autodetect fails without explicit method (no TTY)"
+echo "==> Verify autodetect defaults to npm (no TTY)"
 (
   cd "$REPO_DIR"
   set +e
   curl_install | bash -s -- --dry-run --no-onboard --no-prompt >/tmp/git-detect.out 2>&1
   code=$?
   set -e
-  if [[ "$code" -eq 0 ]]; then
-    echo "ERROR: expected installer to fail when repo is detected but no method selected" >&2
+  if [[ "$code" -ne 0 ]]; then
+    echo "ERROR: expected installer to succeed when repo is detected without method" >&2
+    cat /tmp/git-detect.out >&2
+    exit 1
+  fi
+  if ! sed -r 's/\x1b\[[0-9;]*m//g' /tmp/git-detect.out | grep -q "Install method: npm"; then
+    echo "ERROR: expected autodetect to default to npm" >&2
     cat /tmp/git-detect.out >&2
     exit 1
   fi
