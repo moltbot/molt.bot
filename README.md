@@ -1,6 +1,6 @@
 # clawd.bot
 
-Landing page for [Clawdbot](https://github.com/clawdbot/clawdbot) — your personal AI assistant.
+Landing page for [Moltbot](https://github.com/moltbot/moltbot) — your personal AI assistant.
 
 **Live**: [clawd.bot](https://clawd.bot)
 
@@ -51,6 +51,6 @@ These scripts:
 
 ## Related
 
-- [Clawdbot](https://github.com/clawdbot/clawdbot) — Main repository
+- [Moltbot](https://github.com/moltbot/moltbot) — Main repository
 - [Docs](https://docs.clawd.bot) — Documentation
 - [Discord](https://discord.gg/clawd) — Community

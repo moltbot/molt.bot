@@ -232,7 +232,7 @@ DRY_RUN=${CLAWDBOT_DRY_RUN:-0}
 INSTALL_METHOD=${CLAWDBOT_INSTALL_METHOD:-}
 CLAWDBOT_VERSION=${CLAWDBOT_VERSION:-latest}
 USE_BETA=${CLAWDBOT_BETA:-0}
-GIT_DIR_DEFAULT="${HOME}/clawdbot"
+GIT_DIR_DEFAULT="${HOME}/moltbot"
 GIT_DIR=${CLAWDBOT_GIT_DIR:-$GIT_DIR_DEFAULT}
 GIT_UPDATE=${CLAWDBOT_GIT_UPDATE:-1}
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
@@ -255,7 +255,7 @@ Options:
   --git, --github                     Shortcut for --install-method git
   --version <version|dist-tag>         npm install: version (default: latest)
   --beta                               Use beta if available, else latest
-  --git-dir, --dir <path>             Checkout directory (default: ~/clawdbot)
+  --git-dir, --dir <path>             Checkout directory (default: ~/moltbot)
   --no-git-update                      Skip git pull for existing checkout
   --no-onboard                          Skip onboarding (non-interactive)
   --no-prompt                           Disable prompts (required in CI/automation)
@@ -786,7 +786,7 @@ resolve_clawdbot_bin() {
 
 install_clawdbot_from_git() {
     local repo_dir="$1"
-    local repo_url="https://github.com/clawdbot/clawdbot.git"
+    local repo_url="https://github.com/moltbot/moltbot.git"
 
     echo -e "${WARN}→${NC} Installing Clawdbot from GitHub (${repo_url})..."
 

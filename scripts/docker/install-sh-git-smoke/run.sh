@@ -23,9 +23,9 @@ curl_install | bash -s -- --help >/tmp/install-help.txt
 grep -q -- "--install-method" /tmp/install-help.txt
 
 echo "==> Clone Clawdbot repo"
-REPO_DIR="/tmp/clawdbot-src"
+REPO_DIR="/tmp/moltbot-src"
 rm -rf "$REPO_DIR"
-git clone --depth 1 https://github.com/clawdbot/clawdbot.git "$REPO_DIR"
+git clone --depth 1 https://github.com/moltbot/moltbot.git "$REPO_DIR"
 
 echo "==> Verify autodetect defaults to npm (no TTY)"
 (
