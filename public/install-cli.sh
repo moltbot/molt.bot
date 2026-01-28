@@ -2,31 +2,50 @@
 set -euo pipefail
 
 # Moltbot CLI installer (non-interactive, no onboarding)
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install-cli.sh | bash -s -- [options]
 
 PREFIX="${CLAWDBOT_PREFIX:-${HOME}/.clawdbot}"
 CLAWDBOT_VERSION="${CLAWDBOT_VERSION:-latest}"
 NODE_VERSION="${CLAWDBOT_NODE_VERSION:-22.22.0}"
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
 NPM_LOGLEVEL="${CLAWDBOT_NPM_LOGLEVEL:-error}"
+INSTALL_METHOD="${CLAWDBOT_INSTALL_METHOD:-npm}"
+GIT_DIR="${CLAWDBOT_GIT_DIR:-${HOME}/moltbot}"
+GIT_UPDATE="${CLAWDBOT_GIT_UPDATE:-1}"
 JSON=0
 RUN_ONBOARD=0
 SET_NPM_PREFIX=0
 
 print_usage() {
   cat <<EOF
-Usage: install-cli.sh [options]
-  --json                Emit NDJSON events (no human output)
-  --prefix <path>        Install prefix (default: ~/.clawdbot)
-  --version <ver>        Moltbot version (default: latest)
-  --node-version <ver>   Node version (default: 22.22.0)
-  --onboard              Run "clawdbot onboard" after install
-  --no-onboard           Skip onboarding (default)
-  --set-npm-prefix       Force npm prefix to ~/.npm-global if current prefix is not writable (Linux)
+Moltbot CLI installer (macOS + Linux)
+
+Usage:
+  curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install-cli.sh | bash -s -- [options]
+
+Options:
+  --json                              Emit NDJSON events (no human output)
+  --prefix <path>                      Install prefix (default: ~/.clawdbot)
+  --install-method, --method npm|git   Install via npm (default) or from a git checkout
+  --npm                               Shortcut for --install-method npm
+  --git, --github                      Shortcut for --install-method git
+  --version <version|dist-tag>         npm install: version (default: latest)
+  --git-dir, --dir <path>              Checkout directory (default: ~/moltbot)
+  --no-git-update                      Skip git pull for existing checkout
+  --node-version <ver>                 Node version (default: 22.22.0)
+  --onboard                            Run "clawdbot onboard" after install
+  --no-onboard                         Skip onboarding (default)
+  --set-npm-prefix                     Force npm prefix to ~/.npm-global if current prefix is not writable (Linux)
+  --help, -h                           Show this help
 
 Environment variables:
-  SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
+  CLAWDBOT_INSTALL_METHOD=git|npm
+  CLAWDBOT_VERSION=latest|next|<semver>
+  CLAWDBOT_GIT_DIR=...
+  CLAWDBOT_GIT_UPDATE=0|1
   CLAWDBOT_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
+  SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
+
 EOF
 }
 
@@ -63,7 +82,7 @@ download_file() {
 }
 
 cleanup_legacy_submodules() {
-  local repo_dir="${CLAWDBOT_GIT_DIR:-${HOME}/clawdbot}"
+  local repo_dir="${1:-${CLAWDBOT_GIT_DIR:-${HOME}/clawdbot}}"
   local legacy_dir="${repo_dir}/Peekaboo"
   if [[ -d "$legacy_dir" ]]; then
     emit_json "{\"event\":\"step\",\"name\":\"legacy-submodule\",\"status\":\"start\",\"path\":\"${legacy_dir//\"/\\\"}\"}"
@@ -194,6 +213,26 @@ parse_args() {
         NODE_VERSION="$2"
         shift 2
         ;;
+      --install-method|--method)
+        INSTALL_METHOD="$2"
+        shift 2
+        ;;
+      --npm)
+        INSTALL_METHOD="npm"
+        shift
+        ;;
+      --git|--github)
+        INSTALL_METHOD="git"
+        shift
+        ;;
+      --git-dir|--dir)
+        GIT_DIR="$2"
+        shift 2
+        ;;
+      --no-git-update)
+        GIT_UPDATE=0
+        shift
+        ;;
       --onboard)
         RUN_ONBOARD=1
         shift
@@ -310,6 +349,27 @@ install_node() {
   emit_json "{\"event\":\"step\",\"name\":\"node\",\"status\":\"ok\",\"version\":\"${NODE_VERSION}\"}"
 }
 
+ensure_pnpm() {
+  if command -v pnpm >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if [[ -x "$(node_dir)/bin/corepack" ]]; then
+    emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"start\",\"method\":\"corepack\"}"
+    log "Installing pnpm via Corepack..."
+    "$(node_dir)/bin/corepack" enable >/dev/null 2>&1 || true
+    "$(node_dir)/bin/corepack" prepare pnpm@10 --activate
+    emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"ok\"}"
+    return 0
+  fi
+
+  emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"start\",\"method\":\"npm\"}"
+  log "Installing pnpm via npm..."
+  SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" pnpm@10
+  emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"ok\"}"
+  return 0
+}
+
 fix_npm_prefix_if_needed() {
   # only meaningful on Linux, non-root installs
   if [[ "$(os_detect)" != "linux" ]]; then
@@ -376,6 +436,47 @@ EOF
   emit_json "{\"event\":\"step\",\"name\":\"clawdbot\",\"status\":\"ok\",\"version\":\"${requested}\"}"
 }
 
+install_clawdbot_from_git() {
+  local repo_dir="$1"
+  local repo_url="https://github.com/moltbot/moltbot.git"
+
+  emit_json "{\"event\":\"step\",\"name\":\"clawdbot\",\"status\":\"start\",\"method\":\"git\",\"repo\":\"${repo_url//\"/\\\"}\"}"
+  log "Installing Moltbot from GitHub (${repo_url})..."
+
+  ensure_git
+  ensure_pnpm
+
+  if [[ ! -d "$repo_dir" ]]; then
+    git clone "$repo_url" "$repo_dir"
+  fi
+
+  if [[ "$GIT_UPDATE" == "1" ]]; then
+    if [[ -z "$(git -C "$repo_dir" status --porcelain 2>/dev/null || true)" ]]; then
+      git -C "$repo_dir" pull --rebase || true
+    else
+      log "Repo is dirty; skipping git pull"
+    fi
+  fi
+
+  cleanup_legacy_submodules "$repo_dir"
+
+  SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" pnpm -C "$repo_dir" install
+
+  if ! pnpm -C "$repo_dir" ui:build; then
+    log "UI build failed; continuing (CLI may still work)"
+  fi
+  pnpm -C "$repo_dir" build
+
+  mkdir -p "${PREFIX}/bin"
+  cat > "${PREFIX}/bin/clawdbot" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+exec "${PREFIX}/tools/node/bin/node" "${repo_dir}/dist/entry.js" "\$@"
+EOF
+  chmod +x "${PREFIX}/bin/clawdbot"
+  emit_json "{\"event\":\"step\",\"name\":\"clawdbot\",\"status\":\"ok\",\"method\":\"git\"}"
+}
+
 resolve_clawdbot_version() {
   local version=""
   if [[ -x "${PREFIX}/bin/clawdbot" ]]; then
@@ -397,11 +498,17 @@ main() {
   export PATH
 
   install_node
-  ensure_git
-  if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
-    fix_npm_prefix_if_needed
+  if [[ "$INSTALL_METHOD" == "git" ]]; then
+    install_clawdbot_from_git "$GIT_DIR"
+  elif [[ "$INSTALL_METHOD" == "npm" ]]; then
+    ensure_git
+    if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
+      fix_npm_prefix_if_needed
+    fi
+    install_clawdbot
+  else
+    fail "Unknown install method: ${INSTALL_METHOD} (use npm or git)"
   fi
-  install_clawdbot
 
   local installed_version
   installed_version="$(resolve_clawdbot_version)"
