@@ -4,6 +4,7 @@
 
 - Home page: keep testimonial links clickable while skipping keyboard focus (#18, thanks @wilfriedladenhauf).
 - Fonts: preconnect to Fontshare API/CDN for faster font loading (#16, thanks @wilfriedladenhauf).
+- CLI installer: support git-based installs with safer repo directory handling (#17, thanks @travisp).
 
 ## 2026-01-16
 
