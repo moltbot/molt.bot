@@ -850,7 +850,11 @@ install_clawdbot_from_git() {
     local repo_dir="$1"
     local repo_url="https://github.com/moltbot/moltbot.git"
 
-    echo -e "${WARN}→${NC} Installing Moltbot from GitHub (${repo_url})..."
+    if [[ -d "$repo_dir/.git" ]]; then
+        echo -e "${WARN}→${NC} Installing Moltbot from git checkout: ${INFO}${repo_dir}${NC}"
+    else
+        echo -e "${WARN}→${NC} Installing Moltbot from GitHub (${repo_url})..."
+    fi
 
     if ! check_git; then
         install_git

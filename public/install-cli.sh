@@ -441,7 +441,11 @@ install_clawdbot_from_git() {
   local repo_url="https://github.com/moltbot/moltbot.git"
 
   emit_json "{\"event\":\"step\",\"name\":\"clawdbot\",\"status\":\"start\",\"method\":\"git\",\"repo\":\"${repo_url//\"/\\\"}\"}"
-  log "Installing Moltbot from GitHub (${repo_url})..."
+  if [[ -d "$repo_dir/.git" ]]; then
+    log "Installing Moltbot from git checkout: ${repo_dir}"
+  else
+    log "Installing Moltbot from GitHub (${repo_url})..."
+  fi
 
   ensure_git
   ensure_pnpm
