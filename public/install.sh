@@ -1008,6 +1008,20 @@ run_doctor() {
     echo -e "${SUCCESS}✓${NC} Migration complete"
 }
 
+maybe_open_dashboard() {
+    local claw="${OPENCLAW_BIN:-}"
+    if [[ -z "$claw" ]]; then
+        claw="$(resolve_openclaw_bin || true)"
+    fi
+    if [[ -z "$claw" ]]; then
+        return 0
+    fi
+    if ! "$claw" dashboard --help >/dev/null 2>&1; then
+        return 0
+    fi
+    "$claw" dashboard || true
+}
+
 resolve_workspace_dir() {
     local profile="${OPENCLAW_PROFILE:-default}"
     if [[ "${profile}" != "default" ]]; then
@@ -1168,6 +1182,8 @@ EOF
     if check_existing_openclaw; then
         is_upgrade=true
     fi
+    local should_open_dashboard=false
+    local skip_onboard=false
 
     # Step 1: Homebrew (macOS only)
     install_homebrew
@@ -1233,6 +1249,7 @@ EOF
     fi
     if [[ "$run_doctor_after" == "true" ]]; then
         run_doctor
+        should_open_dashboard=true
     fi
 
     # Step 7: If BOOTSTRAP.md is still present in the workspace, resume onboarding
@@ -1333,15 +1350,16 @@ EOF
             echo -e "Run ${INFO}openclaw doctor${NC}, then ${INFO}openclaw plugins update --all${NC}."
         fi
     else
-        if [[ "$NO_ONBOARD" == "1" ]]; then
+        if [[ "$NO_ONBOARD" == "1" || "$skip_onboard" == "true" ]]; then
             echo -e "Skipping onboard (requested). Run ${INFO}openclaw onboard${NC} later."
         else
             local config_path="${OPENCLAW_CONFIG_PATH:-$HOME/.openclaw/openclaw.json}"
             if [[ -f "${config_path}" || -f "$HOME/.clawdbot/clawdbot.json" || -f "$HOME/.moltbot/moltbot.json" || -f "$HOME/.moldbot/moldbot.json" ]]; then
                 echo -e "Config already present; running doctor..."
                 run_doctor
+                should_open_dashboard=true
                 echo -e "Config already present; skipping onboarding."
-                return 0
+                skip_onboard=true
             fi
             echo -e "Starting setup..."
             echo ""
@@ -1372,6 +1390,10 @@ EOF
         if [[ -n "$claw" ]] && is_gateway_daemon_loaded "$claw"; then
             echo -e "${INFO}i${NC} Gateway daemon detected; restart with: ${INFO}openclaw daemon restart${NC}"
         fi
+    fi
+
+    if [[ "$should_open_dashboard" == "true" ]]; then
+        maybe_open_dashboard
     fi
 
     echo ""
