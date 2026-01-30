@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://clawd.bot',
+  site: 'https://openclaw.ai',
   output: 'static',
   build: {
     assets: 'assets'
