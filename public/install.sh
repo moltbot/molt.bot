@@ -549,8 +549,10 @@ install_node() {
 	            maybe_sudo apt-get install -y build-essential
 	        elif command -v dnf &> /dev/null; then
 	            maybe_sudo dnf groupinstall -y "Development Tools"
+	            maybe_sudo dnf install -y gcc-c++
 	        elif command -v yum &> /dev/null; then
 	            maybe_sudo yum groupinstall -y "Development Tools"
+	            maybe_sudo yum install -y gcc-c++
 	        fi
 	        echo -e "${SUCCESS}✓${NC} Build tools installed"
 	        echo -e "${WARN}→${NC} Installing Node.js via NodeSource..."
