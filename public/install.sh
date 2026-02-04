@@ -546,13 +546,13 @@ install_node() {
 	        echo -e "${WARN}→${NC} Installing build tools..."
             require_sudo
 	        if command -v apt-get &> /dev/null; then
-	            maybe_sudo apt-get install -y build-essential
+	            maybe_sudo apt-get install -y build-essential cmake
 	        elif command -v dnf &> /dev/null; then
 	            maybe_sudo dnf groupinstall -y "Development Tools"
-	            maybe_sudo dnf install -y gcc-c++
+	            maybe_sudo dnf install -y gcc-c++ cmake
 	        elif command -v yum &> /dev/null; then
 	            maybe_sudo yum groupinstall -y "Development Tools"
-	            maybe_sudo yum install -y gcc-c++
+	            maybe_sudo yum install -y gcc-c++ cmake
 	        fi
 	        echo -e "${SUCCESS}✓${NC} Build tools installed"
 	        echo -e "${WARN}→${NC} Installing Node.js via NodeSource..."
