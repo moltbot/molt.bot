@@ -1,2073 +1,2278 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Icon from '../components/Icon.astro';
 import testimonials from '../data/testimonials.json';
 import { getCollection } from 'astro:content';
-
-// Get latest blog post
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const latestPost = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
 import {
-  siWhatsapp, siTelegram, siDiscord, siSignal, siApple,
-  siAnthropic, siSpotify, siObsidian, siGithub, siGooglechrome, siGmail,
-  siX, siPhilipshue
+  siWhatsapp, siTelegram, siDiscord, siNotion, siSpotify,
+  siGithub, siGooglechrome, siHomeassistant, siAnthropic, siSignal
 } from 'simple-icons';
 
-const siIcon = (icon: any) => icon.path;
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const latestPost = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
 
-// Integration pills with icons
-const integrationPills = [
-  { name: 'WhatsApp', icon: siIcon(siWhatsapp), color: '#25D366' },
-  { name: 'Telegram', icon: siIcon(siTelegram), color: '#26A5E4' },
-  { name: 'Discord', icon: siIcon(siDiscord), color: '#5865F2' },
-  { name: 'Slack', icon: 'lucide:hash', color: '#E01E5A' },
-  { name: 'Signal', icon: siIcon(siSignal), color: '#3A76F0' },
-  { name: 'iMessage', icon: siIcon(siApple), color: '#007AFF' },
-  { name: 'Claude', icon: siIcon(siAnthropic), color: '#D4A574' },
-  { name: 'GPT', icon: 'lucide:bot', color: '#00A67E' },
-  { name: 'Spotify', icon: siIcon(siSpotify), color: '#1DB954' },
-  { name: 'Hue', icon: siIcon(siPhilipshue), color: '#0065D3' },
-  { name: 'Obsidian', icon: siIcon(siObsidian), color: '#7C3AED' },
-  { name: 'Twitter', icon: siIcon(siX), color: '#FFFFFF' },
-  { name: 'Browser', icon: siIcon(siGooglechrome), color: '#4285F4' },
-  { name: 'Gmail', icon: siIcon(siGmail), color: '#EA4335' },
-  { name: 'GitHub', icon: siIcon(siGithub), color: '#FFFFFF' },
+const topTestimonials = testimonials.slice(0, 12);
+
+// Featured integrations for teaser
+const featuredIntegrations = [
+  { name: 'WhatsApp', path: siWhatsapp.path, color: '#25D366' },
+  { name: 'Telegram', path: siTelegram.path, color: '#26A5E4' },
+  { name: 'Discord', path: siDiscord.path, color: '#5865F2' },
+  { name: 'Signal', path: siSignal.path, color: '#3A76F0' },
+  { name: 'Notion', path: siNotion.path, color: '#9ca3af' },
+  { name: 'Spotify', path: siSpotify.path, color: '#1DB954' },
+  { name: 'GitHub', path: siGithub.path, color: '#6b7280' },
+  { name: 'Chrome', path: siGooglechrome.path, color: '#4285F4' },
+  { name: 'Home Assistant', path: siHomeassistant.path, color: '#41BDF5' },
+  { name: 'Anthropic', path: siAnthropic.path, color: '#D4A574' },
 ];
-
-// Split top 30 into two rows for carousel
-const half = Math.ceil(testimonials.length / 2);
-const topRow = testimonials.slice(0, half);
-const bottomRow = testimonials.slice(half);
-
-// Duplicate for seamless loop
-const row1 = [...topRow, ...topRow];
-const row2 = [...bottomRow, ...bottomRow];
-
-// Calculate animation duration based on content length for constant speed
-// Each card is ~336px (320px min-width + 16px gap), speed = 50px/s
-const pixelsPerItem = 336;
-const pixelsPerSecond = 50;
-const duration1 = (row1.length / 2 * pixelsPerItem) / pixelsPerSecond;
-const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
 ---
 
 <Layout title="OpenClaw — Personal AI Assistant">
-  <div class="stars"></div>
-  <div class="nebula"></div>
-
-  <main class="container">
-    <!-- Hero Section -->
-    <header class="hero">
-      <div class="lobster-icon" aria-hidden="true">
-        <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Lobster Claw Silhouette -->
-          <path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#lobster-gradient)" class="claw-body"/>
-          <!-- Left Claw -->
-          <path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#lobster-gradient)" class="claw-left"/>
-          <!-- Right Claw -->
-          <path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#lobster-gradient)" class="claw-right"/>
-          <!-- Antenna -->
-          <path d="M45 15 Q35 5 30 8" stroke="var(--coral-bright)" stroke-width="2" stroke-linecap="round" class="antenna"/>
-          <path d="M75 15 Q85 5 90 8" stroke="var(--coral-bright)" stroke-width="2" stroke-linecap="round" class="antenna"/>
-          <!-- Eyes -->
-          <circle cx="45" cy="35" r="6" fill="var(--bg-deep)" class="eye"/>
-          <circle cx="75" cy="35" r="6" fill="var(--bg-deep)" class="eye"/>
-          <circle cx="46" cy="34" r="2" fill="var(--cyan-bright)" class="eye-glow"/>
-          <circle cx="76" cy="34" r="2" fill="var(--cyan-bright)" class="eye-glow"/>
-          <defs>
-            <linearGradient id="lobster-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="var(--coral-bright)"/>
-              <stop offset="100%" stop-color="var(--coral-dark)"/>
-            </linearGradient>
-          </defs>
-        </svg>
+  <nav class="nav">
+    <a href="/" class="nav-logo">
+      <img src="/logo.png" alt="OpenClaw" class="logo light-logo" />
+      <img src="/logo-dark.png" alt="OpenClaw" class="logo dark-logo" />
+    </a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/integrations">Integrations</a>
+        <a href="/showcase">Showcase</a>
+        <a href="https://docs.openclaw.ai" target="_blank">Docs</a>
+        <a href="https://github.com/openclaw/openclaw" target="_blank" class="nav-icon" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
       </div>
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </nav>
 
-      <h1 class="title">
-        <span class="title-main">OpenClaw</span>
-      </h1>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/integrations">Integrations</a>
+    <a href="/showcase">Showcase</a>
+    <a href="https://docs.openclaw.ai" target="_blank">Docs</a>
+    <a href="https://github.com/openclaw/openclaw" target="_blank">GitHub</a>
+  </div>
 
-      <p class="tagline" id="tagline">The AI that actually does things.</p>
-
-      <p class="description">
-        Clears your inbox, sends emails, manages your calendar, checks you in for flights.<br/>
+  <main>
+    <section class="hero">
+      <div class="hero-logo-wrap">
+        <img src="/logo.png" alt="OpenClaw" class="hero-logo light-logo" />
+        <img src="/logo-dark.png" alt="OpenClaw" class="hero-logo dark-logo" />
+      </div>
+      <h1>The AI that actually does things.</h1>
+      <p class="hero-sub">
+        Clears your inbox, manages your calendar, controls your smart home.
         All from WhatsApp, Telegram, or any chat app you already use.
       </p>
-    </header>
+      <div class="hero-actions">
+        <a href="https://docs.openclaw.ai/getting-started" class="btn btn-primary">Get Started</a>
+        <a href="https://discord.com/invite/clawd" class="btn btn-secondary">Join Discord</a>
+      </div>
+    </section>
 
-    <!-- Latest Blog Post -->
     {latestPost && (
-      <section class="latest-post">
-        <a href={`/blog/${latestPost.slug}`} class="latest-post-card">
-          <span class="latest-post-badge">New</span>
-          <span class="latest-post-title">{latestPost.data.title}</span>
-          <span class="latest-post-link">→</span>
-        </a>
-      </section>
+      <a href={`/blog/${latestPost.slug}`} class="announcement">
+        <span class="announcement-tag">New</span>
+        <span>{latestPost.data.title}</span>
+        <span class="announcement-arrow">&rarr;</span>
+      </a>
     )}
 
-    <!-- Testimonials (moved up for social proof) -->
-    <section class="testimonials">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span class="claw-accent">⟩</span> What People Say
-        </h2>
-        <a href="/shoutouts" class="section-link">View all <span class="sr-only">community shoutouts</span>
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
-      <div class="testimonials-track">
-        <div class="testimonials-row row-1" style={`--duration: ${duration1}s`}>
-          {row1.map((t) => (
-            <a href={t.url} target="_blank" rel="noopener" class="testimonial-card" tabindex="-1">
-              <img
-                src={`https://unavatar.io/x/${t.author}`}
-                alt={t.author}
-                class="testimonial-avatar"
-                loading="lazy"
-                onerror={`this.src='https://ui-avatars.com/api/?name=${t.author}&background=FF4D4D&color=fff&size=88'`}
-              />
-              <div class="testimonial-content">
-                <p class="testimonial-quote">"{t.quote}"</p>
-                <span class="testimonial-author">@{t.author}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-        <div class="testimonials-row row-2" style={`--duration: ${duration2}s`}>
-          {row2.map((t) => (
-            <a href={t.url} target="_blank" rel="noopener" class="testimonial-card">
-              <img
-                src={`https://unavatar.io/x/${t.author}`}
-                alt={t.author}
-                class="testimonial-avatar"
-                loading="lazy"
-                onerror={`this.src='https://ui-avatars.com/api/?name=${t.author}&background=FF4D4D&color=fff&size=88'`}
-              />
-              <div class="testimonial-content">
-                <p class="testimonial-quote">"{t.quote}"</p>
-                <span class="testimonial-author">@{t.author}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- Quick Start -->
-    <section class="quickstart">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Quick Start
-      </h2>
+    <section class="install">
       <div class="code-block">
         <div class="code-header">
-          <span class="code-dot"></span>
-          <span class="code-dot"></span>
-          <span class="code-dot"></span>
-          <div class="mode-switch">
+          <div class="mode-tabs">
             <button class="mode-btn active" data-mode="oneliner">One-liner</button>
-            <button class="mode-btn" data-mode="quick">npm</button>
+            <button class="mode-btn" data-mode="npm">npm</button>
             <button class="mode-btn" data-mode="hackable">Hackable</button>
-            <button class="mode-btn" data-mode="macos">macOS</button>
+            <button class="mode-btn" data-mode="macos">macOS App</button>
           </div>
-          <div class="pm-switch" id="pm-switch" style="display: none;">
-            <button class="pm-btn active" data-pm="npm">npm</button>
-            <button class="pm-btn" data-pm="pnpm">pnpm</button>
-          </div>
-          <div class="hackable-switch" id="hackable-switch" style="display: none;">
-            <button class="hackable-btn active" data-hackable="installer">installer</button>
-            <button class="hackable-btn" data-hackable="pnpm">pnpm</button>
-          </div>
-          <div class="os-indicator" id="os-indicator">
-            <span class="os-detected" id="os-detected">macOS/Linux</span>
-            <button class="os-change-btn" id="os-change-btn">change</button>
-          </div>
-          <div class="os-switch" id="os-switch" style="display: none;">
-            <button class="os-btn active" data-os="unix">macOS/Linux</button>
-            <button class="os-btn" data-os="windows">Windows</button>
-          </div>
-          <div class="win-shell-switch" id="win-shell-switch" style="display: none;">
-            <button class="win-shell-btn active" data-shell="powershell">PowerShell</button>
-            <button class="win-shell-btn" data-shell="cmd">CMD</button>
-          </div>
-          <div class="beta-switch" id="beta-switch">
-            <button class="beta-btn" id="beta-btn" data-beta="false">
-              <span class="beta-label">β</span>
-              <span class="beta-text">Beta</span>
-            </button>
-          </div>
-          <div class="switch-placeholder" id="switch-placeholder" aria-hidden="true"></div>
-        </div>
-        <div id="code-oneliner" class="code-content">
-          <div class="code-line comment" id="oneliner-comment"># Works everywhere. Installs everything. You're welcome. 🦞</div>
-          <div class="code-line cmd">
-            <span class="code-prompt">$</span>
-            <span class="os-cmd">curl -fsSL https://openclaw.ai/install.sh | bash</span>
-            <button class="copy-line-btn" data-cmd="oneliner" title="Copy">
-              <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-            </button>
-          </div>
-        </div>
-        <div id="code-quick" class="code-content" style="display: none;">
-          <div class="code-line comment" id="quick-comment-install"># Install OpenClaw</div>
-          <div class="code-line cmd">
-            <span class="code-prompt">$</span>
-            <span class="pm-install">npm i -g openclaw</span>
-            <button class="copy-line-btn" data-cmd="install" title="Copy">
-              <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-            </button>
-          </div>
-          <div class="code-line comment" id="quick-comment-onboard"># Meet your lobster</div>
-          <div class="code-line cmd">
-            <span class="code-prompt">$</span>
-            <span>openclaw onboard</span>
-            <button class="copy-line-btn" data-cmd="onboard" title="Copy">
-              <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-            </button>
-          </div>
-        </div>
-        <div id="code-hackable" class="code-content" style="display: none;">
-          <div id="hackable-installer-content">
-            <div class="code-line comment"># For those who read source code for fun</div>
-            <div class="code-line cmd">
-              <span class="code-prompt">$</span>
-              <span class="os-cmd-hackable">curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git</span>
-              <button class="copy-line-btn" data-cmd="hackable-installer" title="Copy">
-                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
+          <div class="header-controls">
+            <div class="pm-switch" id="pm-switch" style="display: none;">
+              <button class="switch-btn active" data-pm="npm">npm</button>
+              <button class="switch-btn" data-pm="pnpm">pnpm</button>
             </div>
-          </div>
-          <div id="hackable-pnpm-content" style="display: none;">
-            <div class="code-line comment"># You clearly know what you're doing</div>
-            <div class="code-line cmd">
-              <span class="code-prompt">$</span>
-              <span>git clone https://github.com/openclaw/openclaw.git</span>
-              <button class="copy-line-btn" data-cmd="clone" title="Copy">
-                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
+            <div class="hackable-switch" id="hackable-switch" style="display: none;">
+              <button class="switch-btn active" data-hackable="installer">installer</button>
+              <button class="switch-btn" data-hackable="pnpm">pnpm</button>
             </div>
-            <div class="code-line cmd">
-              <span class="code-prompt">$</span>
-              <span>cd openclaw && pnpm install && pnpm run build</span>
-              <button class="copy-line-btn" data-cmd="build" title="Copy">
-                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
+            <div class="os-indicator" id="os-indicator">
+              <span class="os-detected" id="os-detected">macOS/Linux</span>
+              <button class="os-change-btn" id="os-change-btn">change</button>
             </div>
-            <div class="code-line comment"># You built it, now meet it</div>
-            <div class="code-line cmd">
-              <span class="code-prompt">$</span>
-              <span>pnpm run openclaw onboard</span>
-              <button class="copy-line-btn" data-cmd="hackable-onboard" title="Copy">
-                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="os-switch" id="os-switch" style="display: none;">
+              <button class="switch-btn active" data-os="unix">macOS/Linux</button>
+              <button class="switch-btn" data-os="windows">Windows</button>
+            </div>
+            <div class="win-shell-switch" id="win-shell-switch" style="display: none;">
+              <button class="switch-btn active" data-shell="powershell">PowerShell</button>
+              <button class="switch-btn" data-shell="cmd">CMD</button>
+            </div>
+            <div class="beta-toggle" id="beta-toggle">
+              <button class="beta-btn" id="beta-btn" data-beta="false">
+                <span class="beta-indicator"></span>
+                <span>Beta</span>
               </button>
             </div>
           </div>
         </div>
-        <div id="code-macos" class="code-content" style="display: none;">
-          <div class="macos-app-content">
-            <div class="macos-description">
-              <span class="macos-tagline">Companion App (Beta)</span>
-              <span class="macos-subtitle">Menubar access to your lobster. Works great alongside the CLI.</span>
+        <div class="code-body">
+          <div id="code-oneliner" class="code-content">
+            <div class="code-line">
+              <span class="code-comment" id="oneliner-comment"># Works everywhere. Installs everything.</span>
             </div>
-            <a href="https://github.com/openclaw/openclaw/releases/latest" class="macos-download-btn" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Download for macOS
-            </a>
-            <span class="macos-meta">Requires macOS 14+ · Universal Binary</span>
+            <div class="code-line">
+              <span class="code-prompt">$</span>
+              <code class="os-cmd">curl -fsSL https://openclaw.ai/install.sh | bash</code>
+              <button class="copy-line-btn" data-cmd="oneliner" title="Copy">
+                <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </div>
+          </div>
+          <div id="code-npm" class="code-content" style="display: none;">
+            <div class="code-line">
+              <span class="code-comment" id="npm-comment-install"># Install OpenClaw</span>
+            </div>
+            <div class="code-line">
+              <span class="code-prompt">$</span>
+              <code class="pm-install">npm i -g openclaw</code>
+              <button class="copy-line-btn" data-cmd="install" title="Copy">
+                <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </div>
+            <div class="code-line">
+              <span class="code-comment"># Start the setup wizard</span>
+            </div>
+            <div class="code-line">
+              <span class="code-prompt">$</span>
+              <code>openclaw onboard</code>
+              <button class="copy-line-btn" data-cmd="onboard" title="Copy">
+                <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </div>
+          </div>
+          <div id="code-hackable" class="code-content" style="display: none;">
+            <div id="hackable-installer-content">
+              <div class="code-line">
+                <span class="code-comment"># For those who read source code for fun</span>
+              </div>
+              <div class="code-line">
+                <span class="code-prompt">$</span>
+                <code class="os-cmd-hackable">curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git</code>
+                <button class="copy-line-btn" data-cmd="hackable-installer" title="Copy">
+                  <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </div>
+            </div>
+            <div id="hackable-pnpm-content" style="display: none;">
+              <div class="code-line">
+                <span class="code-comment"># Clone and build from source</span>
+              </div>
+              <div class="code-line">
+                <span class="code-prompt">$</span>
+                <code>git clone https://github.com/openclaw/openclaw.git</code>
+                <button class="copy-line-btn" data-cmd="clone" title="Copy">
+                  <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </div>
+              <div class="code-line">
+                <span class="code-prompt">$</span>
+                <code>cd openclaw && pnpm install && pnpm run build</code>
+                <button class="copy-line-btn" data-cmd="build" title="Copy">
+                  <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </div>
+              <div class="code-line">
+                <span class="code-prompt">$</span>
+                <code>pnpm run openclaw onboard</code>
+                <button class="copy-line-btn" data-cmd="hackable-onboard" title="Copy">
+                  <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="code-macos" class="code-content" style="display: none;">
+            <div class="macos-app">
+              <div class="macos-info">
+                <span class="macos-badge">Companion App</span>
+                <p>Menubar access to your lobster. Works alongside the CLI.</p>
+              </div>
+              <a href="https://github.com/openclaw/openclaw/releases/latest" class="macos-download" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download for macOS
+              </a>
+              <span class="macos-meta">Requires macOS 14+ · Universal Binary</span>
+            </div>
           </div>
         </div>
       </div>
-      <p class="quickstart-note">
-        Works on macOS, Windows & Linux. The one-liner installs Node.js and everything else for you.
-      </p>
+      <p class="install-note">Works on macOS, Windows & Linux. The one-liner installs Node.js and everything for you.</p>
     </section>
 
-    <script>
-      const installCmds = {
-        npm: 'npm i -g openclaw',
-        pnpm: 'pnpm add -g openclaw'
-      };
-
-      const windowsPsCmd = 'iwr -useb https://openclaw.ai/install.ps1 | iex';
-      const windowsPsBetaCmd = '& ([scriptblock]::Create((iwr -useb https://openclaw.ai/install.ps1))) -Tag beta';
-      const windowsCmdCmd = 'curl -fsSL https://openclaw.ai/install.cmd -o install.cmd && install.cmd && del install.cmd';
-      const windowsCmdBetaCmd = 'curl -fsSL https://openclaw.ai/install.cmd -o install.cmd && install.cmd --tag beta && del install.cmd';
-      const osCmds = {
-        unix: "curl -fsSL https://openclaw.ai/install.sh | bash",
-        windows: windowsPsCmd
-      };
-
-      const osLabels = {
-        unix: 'macOS/Linux',
-        windows: 'Windows'
-      };
-
-      let currentPm = 'npm';
-      let currentMode = 'oneliner';
-      let currentHackable = 'installer';
-      let currentBeta = false;
-      let osPickerExpanded = false;
-      let currentWinShell = 'powershell';
-
-      // Auto-detect OS
-      const isWindows = navigator.platform.toLowerCase().includes('win') ||
-                        navigator.userAgent.toLowerCase().includes('windows');
-      let currentOs = isWindows ? 'windows' : 'unix';
-
-      const pmBtns = document.querySelectorAll('.pm-btn');
-      const hackableBtns = document.querySelectorAll('.hackable-btn');
-      const osBtns = document.querySelectorAll('.os-btn');
-      const winShellBtns = document.querySelectorAll('.win-shell-btn');
-      const modeBtns = document.querySelectorAll('.mode-btn');
-      const pmSwitch = document.getElementById('pm-switch');
-      const hackableSwitch = document.getElementById('hackable-switch');
-      const osSwitch = document.getElementById('os-switch');
-      const winShellSwitch = document.getElementById('win-shell-switch');
-      const osIndicator = document.getElementById('os-indicator');
-      const osDetected = document.getElementById('os-detected');
-      const osChangeBtn = document.getElementById('os-change-btn');
-      const betaSwitch = document.getElementById('beta-switch');
-      const betaBtn = document.getElementById('beta-btn');
-      const switchPlaceholder = document.getElementById('switch-placeholder');
-      const codeOneliner = document.getElementById('code-oneliner');
-      const codeQuick = document.getElementById('code-quick');
-      const codeHackable = document.getElementById('code-hackable');
-      const codeMacos = document.getElementById('code-macos');
-      const hackableInstallerContent = document.getElementById('hackable-installer-content');
-      const hackablePnpmContent = document.getElementById('hackable-pnpm-content');
-      const onelinerComment = document.getElementById('oneliner-comment');
-      const quickCommentInstall = document.getElementById('quick-comment-install');
-      const quickCommentOnboard = document.getElementById('quick-comment-onboard');
-
-      const comments = {
-        oneliner: {
-          stable: "# Works everywhere. Installs everything. You're welcome. 🦞",
-          beta: "# Living on the edge. Bugs are features you found first. 🦞"
-        },
-        quickInstall: {
-          stable: "# Install OpenClaw",
-          beta: "# Install OpenClaw (beta) — Fresh from the lab 🧪"
-        },
-        quickOnboard: {
-          stable: "# Meet your lobster",
-          beta: "# Meet your experimental lobster"
-        }
-      };
-
-      function updateCommands() {
-        // Update hackable mode commands
-        document.querySelectorAll('.pm-cmd').forEach(cmd => cmd.textContent = currentPm);
-        // Update quick mode install command (with beta support)
-        const betaSuffix = currentBeta ? '@beta' : '';
-        const installCmd = currentPm === 'npm'
-          ? `npm i -g openclaw${betaSuffix}`
-          : `pnpm add -g openclaw${betaSuffix}`;
-        document.querySelectorAll('.pm-install').forEach(cmd => cmd.textContent = installCmd);
-        // Update one-liner OS command (with beta and shell support)
-        let onelinerCmd;
-        if (currentOs === 'unix') {
-          onelinerCmd = currentBeta
-            ? "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta"
-            : "curl -fsSL https://openclaw.ai/install.sh | bash";
-        } else if (currentWinShell === 'cmd') {
-          onelinerCmd = currentBeta ? windowsCmdBetaCmd : windowsCmdCmd;
-        } else {
-          onelinerCmd = currentBeta ? windowsPsBetaCmd : windowsPsCmd;
-        }
-        document.querySelectorAll('.os-cmd').forEach(cmd => cmd.textContent = onelinerCmd);
-        // Update hackable OS command for installer mode
-        const hackableOsCmd = "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git";
-        document.querySelectorAll('.os-cmd-hackable').forEach(cmd => cmd.textContent = hackableOsCmd);
-        // Update OS indicator text
-        osDetected.textContent = osLabels[currentOs];
-        // Update hackable content visibility
-        if (currentMode === 'hackable') {
-          hackableInstallerContent.style.display = currentHackable === 'installer' ? 'block' : 'none';
-          hackablePnpmContent.style.display = currentHackable === 'pnpm' ? 'block' : 'none';
-        }
-        // Update beta button state
-        betaBtn.classList.toggle('active', currentBeta);
-        betaBtn.dataset.beta = currentBeta.toString();
-        // Update comment texts based on beta state
-        const mode = currentBeta ? 'beta' : 'stable';
-        onelinerComment.textContent = comments.oneliner[mode];
-        quickCommentInstall.textContent = comments.quickInstall[mode];
-        quickCommentOnboard.textContent = comments.quickOnboard[mode];
-      }
-
-      function updateVisibility() {
-        codeOneliner.style.display = currentMode === 'oneliner' ? 'block' : 'none';
-        codeQuick.style.display = currentMode === 'quick' ? 'block' : 'none';
-        codeHackable.style.display = currentMode === 'hackable' ? 'block' : 'none';
-        codeMacos.style.display = currentMode === 'macos' ? 'block' : 'none';
-
-        // Show OS indicator for one-liner, PM switch for quick, hackable switch for hackable, nothing for macos
-        const showOsControls = currentMode === 'oneliner';
-        const showPmControls = currentMode === 'quick';
-        const showHackableControls = currentMode === 'hackable';
-        // Beta only applies to oneliner and npm modes (git always gets main branch)
-        const showBetaControls = currentMode === 'oneliner' || currentMode === 'quick';
-        // Show Windows shell toggle when Windows is selected in one-liner mode
-        const showWinShellControls = showOsControls && currentOs === 'windows';
-
-        osIndicator.style.display = showOsControls && !osPickerExpanded ? 'flex' : 'none';
-        osSwitch.style.display = showOsControls && osPickerExpanded ? 'flex' : 'none';
-        winShellSwitch.style.display = showWinShellControls ? 'flex' : 'none';
-        pmSwitch.style.display = showPmControls ? 'flex' : 'none';
-        hackableSwitch.style.display = showHackableControls ? 'flex' : 'none';
-        betaSwitch.style.display = showBetaControls ? 'flex' : 'none';
-        // Show placeholder when no switches visible (macOS mode) to prevent layout shift
-        const noSwitchesVisible = !showOsControls && !showPmControls && !showHackableControls && !showBetaControls;
-        switchPlaceholder.style.display = noSwitchesVisible ? 'block' : 'none';
-      }
-
-      // OS change toggle
-      osChangeBtn.addEventListener('click', () => {
-        osPickerExpanded = true;
-        updateVisibility();
-      });
-
-      // Beta toggle
-      betaBtn.addEventListener('click', () => {
-        currentBeta = !currentBeta;
-        updateCommands();
-      });
-
-      pmBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentPm = btn.dataset.pm;
-          pmBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          updateCommands();
-        });
-      });
-
-      hackableBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentHackable = btn.dataset.hackable;
-          hackableBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          updateCommands();
-        });
-      });
-
-      osBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentOs = btn.dataset.os;
-          osBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          osPickerExpanded = false; // Collapse after selection
-          updateCommands();
-          updateVisibility();
-        });
-      });
-
-      winShellBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentWinShell = btn.dataset.shell;
-          winShellBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          updateCommands();
-        });
-      });
-
-      modeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentMode = btn.dataset.mode;
-          modeBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          osPickerExpanded = false; // Reset when switching modes
-          updateVisibility();
-        });
-      });
-
-      // Initialize UI based on detected OS
-      osBtns.forEach(b => b.classList.toggle('active', b.dataset.os === currentOs));
-      updateCommands();
-      updateVisibility();
-
-      // Copy button functionality
-      const copyCommands = {
-        'oneliner': () => {
-          if (currentOs === 'unix') {
-            return currentBeta
-              ? "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta"
-              : "curl -fsSL https://openclaw.ai/install.sh | bash";
-          } else if (currentWinShell === 'cmd') {
-            return currentBeta ? windowsCmdBetaCmd : windowsCmdCmd;
-          } else {
-            return currentBeta ? windowsPsBetaCmd : windowsPsCmd;
-          }
-        },
-        'install': () => {
-          const betaSuffix = currentBeta ? '@beta' : '';
-          return currentPm === 'npm' ? `npm i -g openclaw${betaSuffix}` : `pnpm add -g openclaw${betaSuffix}`;
-        },
-        'onboard': () => 'openclaw onboard',
-        'hackable-installer': () => "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git",
-        'clone': () => 'git clone https://github.com/openclaw/openclaw.git',
-        'build': () => 'cd openclaw && pnpm install && pnpm run build',
-        'hackable-onboard': () => 'pnpm run openclaw onboard',
-      };
-
-      document.querySelectorAll('.copy-line-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const cmdKey = btn.dataset.cmd;
-          const code = copyCommands[cmdKey]();
-          const copyIcon = btn.querySelector('.copy-icon');
-          const checkIcon = btn.querySelector('.check-icon');
-
-          try {
-            await navigator.clipboard.writeText(code);
-            btn.classList.add('copied');
-            copyIcon.style.display = 'none';
-            checkIcon.style.display = 'block';
-            setTimeout(() => {
-              btn.classList.remove('copied');
-              copyIcon.style.display = 'block';
-              checkIcon.style.display = 'none';
-            }, 2000);
-          } catch (err) {
-            console.error('Failed to copy:', err);
-          }
-        });
-      });
-
-      // Easter egg: Dalek mode on lobster hover
-      const lobsterIcon = document.querySelector('.lobster-icon');
-      const tagline = document.getElementById('tagline');
-      const originalTagline = tagline.textContent;
-      let isAnimating = false;
-
-      lobsterIcon.addEventListener('mouseenter', () => {
-        if (isAnimating) return;
-        isAnimating = true;
-
-        // Animate to Dalek text
-        tagline.style.transition = 'opacity 0.2s ease';
-        tagline.style.opacity = '0';
-
-        setTimeout(() => {
-          tagline.textContent = 'EXFOLIATE! EXFOLIATE!';
-          tagline.classList.add('dalek-mode');
-          tagline.style.opacity = '1';
-        }, 200);
-
-        // Revert after 2 seconds
-        setTimeout(() => {
-          tagline.style.opacity = '0';
-          setTimeout(() => {
-            tagline.textContent = originalTagline;
-            tagline.classList.remove('dalek-mode');
-            tagline.style.opacity = '1';
-            isAnimating = false;
-          }, 200);
-        }, 2000);
-      });
-    </script>
-
-    <!-- What It Does -->
     <section class="features">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> What It Does
-      </h2>
+      <div class="features-intro">
+        <div class="features-copy">
+          <p class="features-kicker">Feature set</p>
+          <h2>More than chat: a local operator for your projects.</h2>
+          <p>OpenClaw runs on your machine, remembers context, and can take real-world actions across your tools.</p>
+        </div>
+        <div class="features-metrics">
+          <div class="metric">
+            <span class="metric-value">50+</span>
+            <span class="metric-label">Integrations</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">100+</span>
+            <span class="metric-label">Community Skills</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">Local</span>
+            <span class="metric-label">Private by default</span>
+          </div>
+        </div>
+      </div>
       <div class="features-grid">
-        <a href="https://docs.openclaw.ai/getting-started" target="_blank" rel="noopener" class="feature-card">
-          <div class="feature-icon"><Icon icon="lucide:home" color="var(--coral-bright)" size={28} /></div>
-          <h3 class="feature-title">Runs on Your Machine</h3>
-          <p class="feature-desc">Mac, Windows, or Linux. Anthropic, OpenAI, or local models. Private by default—your data stays yours.</p>
+        <a href="https://docs.openclaw.ai/getting-started" class="feature-card feature-card--hero">
+          <div class="feature-top">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <span class="feature-pill">Local-first</span>
+          </div>
+          <h3>Runs on your machine</h3>
+          <p>Private by default. Your data stays on your computer — you decide what leaves.</p>
+          <ul class="feature-list">
+            <li>Mac, Windows, Linux supported</li>
+            <li>Offline-friendly with local storage</li>
+          </ul>
+          <div class="feature-illustration feature-illustration--local" aria-hidden="true">
+            <span class="local-monitor"></span>
+            <span class="local-tower"></span>
+            <span class="local-lock"></span>
+          </div>
+          <span class="feature-cta">See how local mode works &rarr;</span>
+        </a>
+        <a href="https://docs.openclaw.ai/tools/exec" class="feature-card feature-card--actions">
+          <div class="feature-top">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <span class="feature-pill">Action Engine</span>
+          </div>
+          <h3>Exec tool: run real commands</h3>
+          <p>Run shell commands in your workspace with foreground or background execution.</p>
+          <ul class="feature-list">
+            <li>Foreground + background via process sessions</li>
+            <li>Sandbox, gateway, or node hosts with approvals</li>
+          </ul>
+          <span class="feature-cta">Read exec tool docs &rarr;</span>
+        </a>
+        <a href="https://docs.openclaw.ai/concepts/session" class="feature-card feature-card--memory">
+          <div class="feature-top">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <span class="feature-pill">Memory</span>
+          </div>
+          <div class="feature-decor feature-decor-memory">
+            <span class="memory-card"></span>
+            <span class="memory-card"></span>
+            <span class="memory-card"></span>
+          </div>
+          <h3>Memory that actually sticks</h3>
+          <p>Stores decisions, names, and project state so you don’t have to restate it every time.</p>
+          <ul class="feature-list">
+            <li>Cross-thread summaries and recall</li>
+            <li>Personal context vault</li>
+          </ul>
+          <span class="feature-cta">How memory works &rarr;</span>
         </a>
         <a href="/integrations" class="feature-card">
-          <div class="feature-icon"><Icon icon="lucide:message-circle" color="var(--coral-bright)" size={28} /></div>
-          <h3 class="feature-title">Any Chat App</h3>
-          <p class="feature-desc">Talk to it on WhatsApp, Telegram, Discord, Slack, Signal, or iMessage. Works in DMs and group chats.</p>
-        </a>
-        <a href="https://docs.openclaw.ai/session" target="_blank" rel="noopener" class="feature-card">
-          <div class="feature-icon"><Icon icon="lucide:brain" color="var(--coral-bright)" size={28} /></div>
-          <h3 class="feature-title">Persistent Memory</h3>
-          <p class="feature-desc">Remembers you and becomes uniquely yours. Your preferences, your context, your AI.</p>
-        </a>
-        <a href="https://docs.openclaw.ai/browser" target="_blank" rel="noopener" class="feature-card">
-          <div class="feature-icon"><Icon icon="lucide:globe" color="var(--coral-bright)" size={28} /></div>
-          <h3 class="feature-title">Browser Control</h3>
-          <p class="feature-desc">It can browse the web, fill forms, and extract data from any site.</p>
-        </a>
-        <a href="https://docs.openclaw.ai/bash" target="_blank" rel="noopener" class="feature-card">
-          <div class="feature-icon"><Icon icon="lucide:terminal" color="var(--coral-bright)" size={28} /></div>
-          <h3 class="feature-title">Full System Access</h3>
-          <p class="feature-desc">Read and write files, run shell commands, execute scripts. Full access or sandboxed—your choice.</p>
-        </a>
-        <a href="https://docs.openclaw.ai/skills" target="_blank" rel="noopener" class="feature-card">
-          <div class="feature-icon"><Icon icon="lucide:puzzle" color="var(--coral-bright)" size={28} /></div>
-          <h3 class="feature-title">Skills & Plugins</h3>
-          <p class="feature-desc">Extend with community skills or build your own. It can even write its own.</p>
-        </a>
-      </div>
-    </section>
-
-    <!-- Integrations Preview -->
-    <section class="integrations-preview">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Works With Everything
-      </h2>
-      <div class="integrations-row">
-        {integrationPills.map((p) => (
-          <span class="integration-pill">
-            <Icon icon={p.icon} color={p.color} size={16} />
-            <span>{p.name}</span>
-          </span>
-        ))}
-      </div>
-      <div class="integrations-links">
-        <a href="/integrations" class="integrations-link">View all 50+ integrations →</a>
-        <span class="link-separator">·</span>
-        <a href="/showcase" class="integrations-link">See what people built →</a>
-      </div>
-    </section>
-
-    <!-- Press Section -->
-    <section class="press-section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Featured In
-      </h2>
-      <div class="press-grid">
-        <a href="https://www.macstories.net/stories/clawdbot-showed-me-what-the-future-of-personal-ai-assistants-looks-like/" target="_blank" rel="noopener" class="press-card press-featured">
-          <div class="press-logo">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="press-icon">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-            </svg>
-            <span class="press-name">MacStories</span>
+          <div class="feature-top">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="feature-pill">Chat Surfaces</span>
           </div>
-          <blockquote class="press-quote">
-            "OpenClaw Showed Me What the Future of Personal AI Assistants Looks Like"
-          </blockquote>
+          <h3>Lives where you already talk</h3>
+          <p>One agent, many front doors — keep a single identity across your team’s chats.</p>
+          <ul class="feature-list">
+            <li>50+ channels with one identity</li>
+            <li>Switch platforms without losing context</li>
+          </ul>
+          <div class="feature-illustration feature-illustration--chat" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="feature-cta">Browse integrations &rarr;</span>
+        </a>
+        <a href="https://docs.openclaw.ai/tools/browser" class="feature-card feature-card--browser">
+          <div class="feature-top">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <span class="feature-pill">Browser Ops</span>
+          </div>
+          <div class="feature-decor feature-decor-browser">
+            <div class="browser-bar">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <h3>Browser automation</h3>
+          <p>Navigate sites, scrape structured data, and complete multi-step flows on your behalf.</p>
+          <ul class="feature-list">
+            <li>RPA for the web, on demand</li>
+            <li>QA and ops workflows without scripts</li>
+          </ul>
+          <span class="feature-cta">See browser tools &rarr;</span>
+        </a>
+        <a href="https://clawhub.com" class="feature-card feature-card--wide" target="_blank">
+          <div class="feature-top">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <span class="feature-pill">Skill Library</span>
+          </div>
+          <h3>100+ skills, plus your own</h3>
+          <p>Pull community skills or ship custom automations in TypeScript.</p>
+          <ul class="feature-list">
+            <li>Browse, remix, and publish on ClawHub</li>
+            <li>Build fast with a simple SDK</li>
+          </ul>
+          <div class="feature-illustration feature-illustration--skills" aria-hidden="true">
+            <span class="skill-card"></span>
+            <span class="skill-card"></span>
+            <span class="skill-card"></span>
+            <span class="skill-badge"></span>
+          </div>
+          <span class="feature-cta">Visit ClawHub &rarr;</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="integrations-teaser">
+      <div class="integrations-content">
+        <div class="integrations-text">
+          <h2>Works with your tools.</h2>
+          <p class="integrations-sub">Chat apps, docs, calendars, and smart home.</p>
+          <a href="/integrations" class="integrations-link">See all 50+ integrations &rarr;</a>
+        </div>
+        <div class="integrations-icons">
+          {featuredIntegrations.map((item) => (
+            <div class="integration-icon" title={item.name}>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill={item.color}>
+                <path d={item.path} />
+              </svg>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="press" aria-labelledby="press-title">
+      <div class="press-header">
+        <h2 id="press-title">Press</h2>
+        <p class="press-sub">Selected coverage</p>
+      </div>
+      <div class="press-grid">
+        <a href="https://www.macstories.net/stories/clawdbot-showed-me-what-the-future-of-personal-ai-assistants-looks-like/" class="press-card" target="_blank">
+          <span class="press-source">MacStories</span>
+          <p>"OpenClaw Showed Me What the Future of Personal AI Assistants Looks Like"</p>
           <span class="press-author">Federico Viticci</span>
         </a>
-        <a href="https://www.starryhope.com/minipcs/clawdbot-mac-mini-ai-agent-trend/" target="_blank" rel="noopener" class="press-card">
-          <div class="press-logo">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="press-icon">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-            <span class="press-name">StarryHope</span>
-          </div>
-          <blockquote class="press-quote">
-            "The Lobster Takeover: Why Developers Are Buying Mac Minis to Run Their Own AI Agents"
-          </blockquote>
+        <a href="https://www.starryhope.com/minipcs/clawdbot-mac-mini-ai-agent-trend/" class="press-card" target="_blank">
+          <span class="press-source">StarryHope</span>
+          <p>"The Lobster Takeover: Why Developers Are Buying Mac Minis to Run Their Own AI Agents"</p>
           <span class="press-author">Jim Mendenhall</span>
         </a>
       </div>
     </section>
 
-    <!-- CTA Grid -->
-    <nav class="cta-grid">
-      <a href="https://discord.com/invite/clawd" class="cta cta-discord" target="_blank" rel="noopener">
-        <svg class="cta-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-        </svg>
-        <span class="cta-label">Discord</span>
-        <span class="cta-sub">Join the community</span>
-      </a>
-
-      <a href="https://docs.openclaw.ai/getting-started" class="cta cta-docs" target="_blank" rel="noopener">
-        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          <line x1="8" y1="7" x2="16" y2="7"/>
-          <line x1="8" y1="11" x2="14" y2="11"/>
-        </svg>
-        <span class="cta-label">Documentation</span>
-        <span class="cta-sub">Learn the ropes</span>
-      </a>
-
-      <a href="https://github.com/openclaw/openclaw" class="cta cta-github" target="_blank" rel="noopener">
-        <svg class="cta-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
-        <span class="cta-label">GitHub</span>
-        <span class="cta-sub">View the source</span>
-      </a>
-
-      <a href="https://clawhub.com" class="cta cta-skills" target="_blank" rel="noopener">
-        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-        <span class="cta-label">ClawHub</span>
-        <span class="cta-sub">Download skills</span>
-      </a>
-    </nav>
-
-    <!-- Newsletter Signup -->
-    <section class="newsletter">
-      <div class="newsletter-content">
-        <h2 class="newsletter-title">
-          <span class="claw-accent">⟩</span> Stay in the Loop
-        </h2>
-        <p class="newsletter-desc">Get updates on new features, integrations, and lobster wisdom. No spam, unsubscribe anytime.</p>
-        <form class="newsletter-form" action="https://buttondown.com/api/emails/embed-subscribe/steipete" method="post" target="_blank">
-          <input type="hidden" name="tag" value="clawdbot" />
-          <input
-            type="email"
-            name="email"
-            placeholder="your@email.com"
-            required
-            class="newsletter-input"
-            aria-label="Email address"
-          />
-          <button type="submit" class="newsletter-btn">
-            Subscribe
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
-            </svg>
-          </button>
-        </form>
+    <section class="testimonials">
+      <h2>What people are saying</h2>
+      <div class="marquee-container">
+        <div class="marquee">
+          <div class="marquee-content">
+            {topTestimonials.map((t) => (
+              <a href={t.url} class="testimonial" target="_blank">
+                <div class="testimonial-header">
+                  <img src={`https://unavatar.io/x/${t.author}`} alt={t.author} loading="lazy" />
+                  <span class="testimonial-author">@{t.author}</span>
+                  <svg class="x-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <p class="testimonial-quote">{t.quote}</p>
+              </a>
+            ))}
+          </div>
+          <div class="marquee-content" aria-hidden="true">
+            {topTestimonials.map((t) => (
+              <a href={t.url} class="testimonial" target="_blank" tabindex="-1">
+                <div class="testimonial-header">
+                  <img src={`https://unavatar.io/x/${t.author}`} alt="" loading="lazy" />
+                  <span class="testimonial-author">@{t.author}</span>
+                  <svg class="x-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <p class="testimonial-quote">{t.quote}</p>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
+      <a href="/showcase" class="link">See Showcase &rarr;</a>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <nav class="footer-nav">
-        <a href="/blog">Blog</a>
-        <span class="footer-separator">·</span>
-        <a href="/showcase">Showcase</a>
-        <span class="footer-separator">·</span>
-        <a href="/shoutouts">Shoutouts</a>
-        <span class="footer-separator">·</span>
-        <a href="/integrations">Integrations</a>
-      </nav>
-      <p>Built by <a href="https://molty.me" target="_blank" rel="noopener">Molty</a> 🦞, a space lobster AI with a <a href="https://soul.md" target="_blank" rel="noopener">soul</a>, by <a href="https://steipete.me" target="_blank" rel="noopener">Peter Steinberger</a> & <a href="https://github.com/openclaw/openclaw#community" target="_blank" rel="noopener">community</a>.</p>
-      <p class="disclaimer">Formerly known as Clawdbot and Moltbot. Independent project, not affiliated with Anthropic.</p>
-    </footer>
+    <section class="cta-section">
+      <h2>Ready to try it?</h2>
+      <p>Install in under a minute. Free and open source.</p>
+      <a href="https://docs.openclaw.ai/getting-started" class="btn btn-primary">Get Started</a>
+    </section>
+
+    <section class="links-grid">
+      <a href="https://discord.com/invite/clawd" target="_blank" class="link-card">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        <strong>Discord</strong>
+        <span>Join 10k+ members</span>
+      </a>
+      <a href="https://docs.openclaw.ai" target="_blank" class="link-card">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <strong>Documentation</strong>
+        <span>Learn how it works</span>
+      </a>
+      <a href="https://github.com/openclaw/openclaw" target="_blank" class="link-card">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        <strong>GitHub</strong>
+        <span>Star the repo</span>
+      </a>
+      <a href="https://clawhub.com" target="_blank" class="link-card">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <strong>ClawHub</strong>
+        <span>Browse 100+ skills</span>
+      </a>
+    </section>
+
+    <section class="newsletter">
+      <h3>Stay updated</h3>
+      <p>New features and integrations. No spam.</p>
+      <form action="https://buttondown.com/api/emails/embed-subscribe/steipete" method="post" target="_blank">
+        <input type="hidden" name="tag" value="clawdbot" />
+        <input type="email" name="email" placeholder="you@email.com" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </section>
   </main>
+
+  <footer>
+    <nav>
+      <a href="/blog">Blog</a>
+      <a href="/showcase">Showcase</a>
+      <a href="/integrations">Integrations</a>
+    </nav>
+    <p>Built by <a href="https://steipete.me">Peter Steinberger</a> & <a href="https://github.com/openclaw/openclaw#community">community</a></p>
+    <p class="disclaimer">Formerly Clawdbot. Independent project, not affiliated with Anthropic.</p>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    });
+
+    // === EASTER EGGS ===
+
+    // 1. Logo double-click makes it dance!
+    document.querySelectorAll('.nav-logo, .hero-logo-wrap').forEach(logo => {
+      logo.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        // Find the visible logo (check computed style, not inline)
+        const imgs = logo.querySelectorAll('img');
+        const visibleImg = Array.from(imgs).find(img => getComputedStyle(img).display !== 'none');
+        if (visibleImg) {
+          visibleImg.style.animation = 'lobsterDance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          setTimeout(() => visibleImg.style.animation = '', 600);
+        }
+      });
+    });
+
+    // 2. Konami Code - unlocks "party mode"
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiIndex = 0;
+    document.addEventListener('keydown', (e) => {
+      if (e.key === konamiCode[konamiIndex]) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+          konamiIndex = 0;
+          document.body.classList.add('party-mode');
+          setTimeout(() => document.body.classList.remove('party-mode'), 3000);
+        }
+      } else {
+        konamiIndex = 0;
+      }
+    });
+
+
+    // 5. Hero title glitch on long hover
+    let glitchTimeout;
+    const heroTitle = document.querySelector('.hero h1');
+    heroTitle?.addEventListener('mouseenter', () => {
+      glitchTimeout = setTimeout(() => {
+        heroTitle.classList.add('glitch-text');
+        setTimeout(() => heroTitle.classList.remove('glitch-text'), 500);
+      }, 2000);
+    });
+    heroTitle?.addEventListener('mouseleave', () => {
+      clearTimeout(glitchTimeout);
+    });
+
+    // 6. Confetti on successful copy
+    function createConfetti(x, y) {
+      const colors = ['#F70713', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
+      for (let i = 0; i < 12; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = x + 'px';
+        confetti.style.top = y + 'px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+        confetti.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+        confetti.style.setProperty('--r', Math.random() * 360 + 'deg');
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 600);
+      }
+    }
+
+    // Attach confetti to copy buttons
+    document.querySelectorAll('.copy-line-btn').forEach(btn => {
+      const originalClick = btn.onclick;
+      btn.addEventListener('click', (e) => {
+        const rect = btn.getBoundingClientRect();
+        createConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      });
+    });
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger?.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu?.classList.toggle('active');
+      document.body.style.overflow = mobileMenu?.classList.contains('active') ? 'hidden' : '';
+    });
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger?.classList.remove('active');
+        mobileMenu?.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Install section functionality
+    const windowsPsCmd = 'iwr -useb https://openclaw.ai/install.ps1 | iex';
+    const windowsPsBetaCmd = '& ([scriptblock]::Create((iwr -useb https://openclaw.ai/install.ps1))) -Tag beta';
+    const windowsCmdCmd = 'curl -fsSL https://openclaw.ai/install.cmd -o install.cmd && install.cmd && del install.cmd';
+    const windowsCmdBetaCmd = 'curl -fsSL https://openclaw.ai/install.cmd -o install.cmd && install.cmd --tag beta && del install.cmd';
+
+    let currentPm = 'npm';
+    let currentMode = 'oneliner';
+    let currentHackable = 'installer';
+    let currentBeta = false;
+    let osPickerExpanded = false;
+    let currentWinShell = 'powershell';
+    const isWindows = navigator.platform?.toLowerCase().includes('win') || navigator.userAgent?.toLowerCase().includes('windows');
+    let currentOs = isWindows ? 'windows' : 'unix';
+
+    const osLabels = { unix: 'macOS/Linux', windows: 'Windows' };
+
+    function updateCommands() {
+      const betaSuffix = currentBeta ? '@beta' : '';
+      const installCmd = currentPm === 'npm' ? `npm i -g openclaw${betaSuffix}` : `pnpm add -g openclaw${betaSuffix}`;
+      document.querySelectorAll('.pm-install').forEach(el => el.textContent = installCmd);
+
+      let onelinerCmd;
+      if (currentOs === 'unix') {
+        onelinerCmd = currentBeta ? "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta" : "curl -fsSL https://openclaw.ai/install.sh | bash";
+      } else if (currentWinShell === 'cmd') {
+        onelinerCmd = currentBeta ? windowsCmdBetaCmd : windowsCmdCmd;
+      } else {
+        onelinerCmd = currentBeta ? windowsPsBetaCmd : windowsPsCmd;
+      }
+      document.querySelectorAll('.os-cmd').forEach(el => el.textContent = onelinerCmd);
+
+      const hackableCmd = "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git";
+      document.querySelectorAll('.os-cmd-hackable').forEach(el => el.textContent = hackableCmd);
+
+      document.getElementById('os-detected').textContent = osLabels[currentOs];
+
+      if (currentMode === 'hackable') {
+        document.getElementById('hackable-installer-content').style.display = currentHackable === 'installer' ? 'block' : 'none';
+        document.getElementById('hackable-pnpm-content').style.display = currentHackable === 'pnpm' ? 'block' : 'none';
+      }
+
+      const betaBtn = document.getElementById('beta-btn');
+      betaBtn.classList.toggle('active', currentBeta);
+
+      const comment = document.getElementById('oneliner-comment');
+      comment.textContent = currentBeta ? "# Living on the edge. Fresh from the lab." : "# Works everywhere. Installs everything.";
+      const npmComment = document.getElementById('npm-comment-install');
+      if (npmComment) npmComment.textContent = currentBeta ? "# Install OpenClaw (beta)" : "# Install OpenClaw";
+    }
+
+    function updateVisibility() {
+      document.getElementById('code-oneliner').style.display = currentMode === 'oneliner' ? 'block' : 'none';
+      document.getElementById('code-npm').style.display = currentMode === 'npm' ? 'block' : 'none';
+      document.getElementById('code-hackable').style.display = currentMode === 'hackable' ? 'block' : 'none';
+      document.getElementById('code-macos').style.display = currentMode === 'macos' ? 'block' : 'none';
+
+      const showOs = currentMode === 'oneliner';
+      const showPm = currentMode === 'npm';
+      const showHackable = currentMode === 'hackable';
+      const showBeta = currentMode === 'oneliner' || currentMode === 'npm';
+      const showWinShell = showOs && currentOs === 'windows';
+
+      document.getElementById('os-indicator').style.display = showOs && !osPickerExpanded ? 'flex' : 'none';
+      document.getElementById('os-switch').style.display = showOs && osPickerExpanded ? 'flex' : 'none';
+      document.getElementById('win-shell-switch').style.display = showWinShell ? 'flex' : 'none';
+      document.getElementById('pm-switch').style.display = showPm ? 'flex' : 'none';
+      document.getElementById('hackable-switch').style.display = showHackable ? 'flex' : 'none';
+      document.getElementById('beta-toggle').style.display = showBeta ? 'flex' : 'none';
+    }
+
+    document.getElementById('os-change-btn')?.addEventListener('click', () => {
+      currentOs = currentOs === 'unix' ? 'windows' : 'unix';
+      updateCommands();
+      updateVisibility();
+    });
+    document.getElementById('beta-btn')?.addEventListener('click', () => { currentBeta = !currentBeta; updateCommands(); });
+
+    document.querySelectorAll('.switch-btn[data-pm]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentPm = btn.dataset.pm;
+        document.querySelectorAll('.switch-btn[data-pm]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateCommands();
+      });
+    });
+
+    document.querySelectorAll('.switch-btn[data-hackable]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentHackable = btn.dataset.hackable;
+        document.querySelectorAll('.switch-btn[data-hackable]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateCommands();
+      });
+    });
+
+    document.querySelectorAll('.switch-btn[data-os]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentOs = btn.dataset.os;
+        document.querySelectorAll('.switch-btn[data-os]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        osPickerExpanded = false;
+        updateCommands();
+        updateVisibility();
+      });
+    });
+
+    document.querySelectorAll('.switch-btn[data-shell]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentWinShell = btn.dataset.shell;
+        document.querySelectorAll('.switch-btn[data-shell]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateCommands();
+      });
+    });
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentMode = btn.dataset.mode;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        osPickerExpanded = false;
+        updateVisibility();
+      });
+    });
+
+    document.querySelectorAll('.switch-btn[data-os]').forEach(b => b.classList.toggle('active', b.dataset.os === currentOs));
+    updateCommands();
+    updateVisibility();
+
+    const copyCommands = {
+      'oneliner': () => {
+        if (currentOs === 'unix') return currentBeta ? "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta" : "curl -fsSL https://openclaw.ai/install.sh | bash";
+        return currentWinShell === 'cmd' ? (currentBeta ? windowsCmdBetaCmd : windowsCmdCmd) : (currentBeta ? windowsPsBetaCmd : windowsPsCmd);
+      },
+      'install': () => currentPm === 'npm' ? `npm i -g openclaw${currentBeta ? '@beta' : ''}` : `pnpm add -g openclaw${currentBeta ? '@beta' : ''}`,
+      'onboard': () => 'openclaw onboard',
+      'hackable-installer': () => "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git",
+      'clone': () => 'git clone https://github.com/openclaw/openclaw.git',
+      'build': () => 'cd openclaw && pnpm install && pnpm run build',
+      'hackable-onboard': () => 'pnpm run openclaw onboard',
+    };
+
+    document.querySelectorAll('.copy-line-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const cmdKey = btn.dataset.cmd;
+        const code = copyCommands[cmdKey]();
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.classList.add('copied');
+          btn.querySelector('.copy-icon').style.display = 'none';
+          btn.querySelector('.check-icon').style.display = 'block';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.querySelector('.copy-icon').style.display = 'block';
+            btn.querySelector('.check-icon').style.display = 'none';
+          }, 2000);
+        } catch (err) { console.error('Copy failed:', err); }
+      });
+    });
+  </script>
 </Layout>
 
 <style>
-  /* Starfield Background */
-  .stars {
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
-      radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.4), transparent),
-      radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.7), transparent),
-      radial-gradient(2px 2px at 200px 60px, rgba(0,229,204,0.6), transparent),
-      radial-gradient(1px 1px at 250px 150px, rgba(255,255,255,0.5), transparent),
-      radial-gradient(2px 2px at 300px 40px, rgba(255,77,77,0.4), transparent);
-    background-size: 350px 200px;
-    animation: twinkle 8s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  @keyframes twinkle {
-    0% { opacity: 0.4; }
-    100% { opacity: 0.7; }
-  }
-
-  /* Nebula Gradient */
-  .nebula {
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(255, 77, 77, 0.12), transparent 50%),
-      radial-gradient(ellipse 60% 60% at 80% 30%, rgba(0, 229, 204, 0.08), transparent 50%),
-      radial-gradient(ellipse 90% 70% at 50% 90%, rgba(255, 77, 77, 0.06), transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 60px 24px 40px;
-    min-height: 100vh;
+  /* Nav */
+  .nav {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 40px;
+  }
+  .nav-logo { display: flex; }
+  .nav-logo .logo { height: 28px; width: auto; }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--fg-muted);
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-icon {
+    display: flex;
+    align-items: center;
+  }
+  .theme-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--fg-muted);
+    display: flex;
+    transition: all 0.3s ease;
+  }
+  .theme-btn:hover {
+    color: var(--fg);
+    transform: rotate(15deg);
+  }
+  .theme-btn:active {
+    transform: scale(0.9);
+  }
+
+  /* Logo visibility */
+  .dark-logo { display: none; }
+  :global([data-theme="dark"]) .light-logo { display: none; }
+  :global([data-theme="dark"]) .dark-logo { display: block; }
+
+  .theme-btn .moon { display: none; }
+  :global([data-theme="dark"]) .theme-btn .sun { display: none; }
+  :global([data-theme="dark"]) .theme-btn .moon { display: block; }
+
+  /* Main */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
   }
 
   /* Hero */
   .hero {
     text-align: center;
-    margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out;
+    padding: 60px 0 40px;
   }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .hero-logo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
   }
-
-  .lobster-icon {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 24px;
-    animation: float 4s ease-in-out infinite;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+  .hero-logo {
+    height: 80px;
+    width: auto;
   }
-
-  .lobster-icon:hover {
-    transform: scale(1.1);
-    animation: none;
-  }
-
-  .lobster-icon svg {
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 0 20px rgba(255, 77, 77, 0.4));
-    transition: filter 0.3s ease;
-  }
-
-  .lobster-icon:hover svg {
-    filter: drop-shadow(0 0 30px rgba(0, 229, 204, 0.6));
-  }
-
-  .lobster-icon .eye-glow {
-    animation: blink 3s ease-in-out infinite;
-  }
-
-  .lobster-icon .antenna {
-    animation: wiggle 2s ease-in-out infinite;
-    transform-origin: center;
-  }
-
-  .lobster-icon .claw-left {
-    animation: clawSnap 4s ease-in-out infinite;
-    transform-origin: right center;
-  }
-
-  .lobster-icon .claw-right {
-    animation: clawSnap 4s ease-in-out infinite 0.2s;
-    transform-origin: left center;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
-  @keyframes blink {
-    0%, 90%, 100% { opacity: 1; }
-    95% { opacity: 0.3; }
-  }
-
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-3deg); }
-    75% { transform: rotate(3deg); }
-  }
-
-  @keyframes clawSnap {
-    0%, 85%, 100% { transform: rotate(0deg); }
-    90% { transform: rotate(-8deg); }
-    95% { transform: rotate(0deg); }
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 10vw, 4.5rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1;
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     margin-bottom: 12px;
   }
-
-  .title-main {
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--coral-bright) 50%, var(--cyan-bright) 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradientShift 6s ease infinite;
+  .hero-sub {
+    color: var(--fg-soft);
+    font-size: 17px;
+    max-width: 480px;
+    margin: 0 auto 28px;
   }
-
-  @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .tagline {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--coral-bright);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    animation: fadeInUp 0.8s ease-out 0.15s both;
-  }
-
-  .tagline.dalek-mode {
-    color: var(--cyan-bright);
-    animation: shake 0.1s ease-in-out infinite;
-    text-shadow: 0 0 10px var(--cyan-glow);
-  }
-
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-2px); }
-    75% { transform: translateX(2px); }
-  }
-
-  .description {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    max-width: 780px;
-    margin: 0 auto;
-    line-height: 1.7;
-    animation: fadeInUp 0.8s ease-out 0.3s both;
-  }
-
-  /* CTA Grid */
-  .cta-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.45s both;
-  }
-
-  @media (min-width: 640px) {
-    .cta-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .cta {
+  .hero-actions {
     display: flex;
-    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
-    padding: 24px 16px;
-    border-radius: 16px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.6);
-    backdrop-filter: blur(12px);
+    padding: 14px 24px;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 400;
     text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  .btn:active {
+    transform: scale(0.97);
+    transition-duration: 0.08s;
+  }
+  .btn-primary {
+    background: #F70713;
+    color: #FFFFFF;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 13, 0.45) 0%, rgba(255, 0, 13, 0.9) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+  }
+  :global([data-theme="dark"]) .btn-primary::before {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 100, 100, 0.9) 0%, rgba(247, 7, 19, 1) 100%);
+  }
+  .btn-primary:hover::before {
+    opacity: 1;
+  }
+  .btn-secondary {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    transition: all 0.2s ease;
+  }
+  :global([data-theme="dark"]) .btn-secondary {
+    background: transparent;
+    border-color: var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-soft);
+    border-color: var(--fg-muted);
+  }
+  :global([data-theme="dark"]) .btn-secondary:hover {
+    background: var(--bg-soft);
+    border-color: var(--fg-muted);
   }
 
-  .cta:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-accent);
-    box-shadow:
-      0 12px 40px rgba(255, 77, 77, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-
-  .cta-icon {
-    width: 28px;
-    height: 28px;
-    color: var(--coral-bright);
-    transition: transform 0.25s ease;
-  }
-
-  .cta:hover .cta-icon {
-    transform: scale(1.1);
-  }
-
-  .cta-discord:hover { border-color: #5865F2; box-shadow: 0 12px 40px rgba(88, 101, 242, 0.2); }
-  .cta-discord:hover .cta-icon { color: #5865F2; }
-
-  .cta-docs:hover { border-color: var(--cyan-bright); box-shadow: 0 12px 40px rgba(0, 229, 204, 0.15); }
-  .cta-docs:hover .cta-icon { color: var(--cyan-bright); }
-
-  .cta-github:hover { border-color: #f0f4ff; box-shadow: 0 12px 40px rgba(240, 244, 255, 0.1); }
-  .cta-github:hover .cta-icon { color: #f0f4ff; }
-
-  .cta-skills:hover { border-color: #fbbf24; box-shadow: 0 12px 40px rgba(251, 191, 36, 0.15); }
-  .cta-skills:hover .cta-icon { color: #fbbf24; }
-
-  .cta-label {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  .cta-sub {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  /* Newsletter */
-  .newsletter {
-    margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.7s both;
-  }
-
-  .newsletter-content {
-    text-align: center;
-    padding: 40px 32px;
-    border-radius: 20px;
-    border: 1px solid var(--border-subtle);
-    background: linear-gradient(135deg, rgba(255, 77, 77, 0.05) 0%, rgba(10, 15, 26, 0.8) 50%, rgba(0, 229, 204, 0.03) 100%);
-    backdrop-filter: blur(12px);
-  }
-
-  .newsletter-title {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 8px;
+  /* Announcement */
+  .announcement {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    text-decoration: none;
+    color: var(--fg-soft);
+    font-size: 13px;
+    margin: 0 auto 40px;
+    width: fit-content;
+    transition: all 0.2s ease;
   }
-
-  .newsletter-desc {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+  .announcement:hover {
+    background: var(--bg-soft);
+    border-color: var(--fg-muted);
+    color: var(--fg);
   }
+  .announcement-tag {
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .announcement-arrow { color: var(--fg-muted); }
 
-  .newsletter-form {
+  /* Install / Code Block */
+  .install {
+    margin-bottom: 48px;
+  }
+  .code-block {
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    overflow: hidden;
+    background: var(--code-bg);
+  }
+  .code-header {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    max-width: 440px;
-    margin: 0 auto;
+    padding: 10px 14px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
   }
-
-  .newsletter-input {
-    flex: 1;
-    padding: 14px 18px;
-    border-radius: 12px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.8);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    outline: none;
-    transition: all 0.25s ease;
+  :global([data-theme="dark"]) .code-header {
+    background: #000;
   }
-
-  .newsletter-input::placeholder {
-    color: var(--text-muted);
+  .mode-tabs {
+    display: flex;
+    gap: 2px;
   }
-
-  .newsletter-input:focus {
-    border-color: var(--coral-bright);
-    box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.15);
+  .mode-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--fg-muted);
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.15s;
   }
-
-  .newsletter-btn {
+  .mode-btn:hover { color: var(--fg-soft); }
+  .mode-btn.active {
+    background: var(--bg);
+    color: var(--fg);
+  }
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pm-switch, .hackable-switch, .os-switch, .win-shell-switch {
+    display: flex;
+    gap: 2px;
+    background: var(--bg);
+    border-radius: 15px;
+    padding: 2px;
+  }
+  .switch-btn {
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--fg-muted);
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.15s;
+  }
+  .switch-btn:hover { color: var(--fg-soft); }
+  .switch-btn.active {
+    background: var(--bg-muted);
+    color: var(--fg);
+  }
+  .os-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--fg-muted);
+  }
+  .os-change-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .os-change-btn:hover { text-decoration: underline; }
+  .beta-toggle { display: flex; }
+  .beta-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--fg-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .beta-btn:hover { border-color: var(--fg-muted); }
+  .beta-btn.active { border-color: var(--accent); color: var(--accent); }
+  .beta-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fg-muted);
+    transition: background 0.15s;
+  }
+  .beta-btn.active .beta-indicator { background: var(--accent); }
+  .code-body { padding: 14px 16px; }
+  .code-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .code-comment { color: var(--fg-muted); font-style: italic; }
+  .code-prompt { color: var(--accent); font-weight: 600; user-select: none; }
+  .code-line code { flex: 1; color: var(--fg-soft); }
+  .copy-line-btn {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--fg-muted);
+    opacity: 0.5;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+  }
+  .code-line:hover .copy-line-btn { opacity: 1; }
+  .copy-line-btn:hover { color: var(--accent); }
+  .copy-line-btn:active { transform: scale(0.85); }
+  .copy-line-btn.copied { color: #10b981; }
+  .copy-line-btn .check-icon {
+    animation: checkArrive 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes checkArrive {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .macos-app { text-align: center; padding: 16px 0; }
+  .macos-info { margin-bottom: 16px; }
+  .macos-badge {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .macos-info p { color: var(--fg-muted); font-size: 13px; margin: 0; }
+  .macos-download {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 14px 24px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(135deg, var(--coral-bright) 0%, var(--coral-dark) 100%);
-    color: white;
-    font-family: var(--font-display);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(255, 77, 77, 0.25);
+    background: #F70713;
+    color: #FFFFFF;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
   }
-
-  .newsletter-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(255, 77, 77, 0.35);
+  .macos-download::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 13, 0.45) 0%, rgba(255, 0, 13, 0.9) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
   }
-
-  .newsletter-btn:active {
-    transform: translateY(0);
+  :global([data-theme="dark"]) .macos-download::before {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 100, 100, 0.9) 0%, rgba(247, 7, 19, 1) 100%);
   }
-
-  .newsletter-btn svg {
-    width: 18px;
-    height: 18px;
-    transition: transform 0.2s ease;
+  .macos-download:hover::before {
+    opacity: 1;
   }
-
-  .newsletter-btn:hover svg {
-    transform: translateX(3px);
-  }
-
-  @media (max-width: 480px) {
-    .newsletter-content {
-      padding: 28px 20px;
-    }
-
-    .newsletter-form {
-      flex-direction: column;
-    }
-
-    .newsletter-input {
-      width: 100%;
-    }
-
-    .newsletter-btn {
-      width: 100%;
-      justify-content: center;
-    }
+  .macos-meta { display: block; margin-top: 10px; font-size: 11px; color: var(--fg-muted); }
+  .install-note {
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 12px;
+    margin-top: 12px;
   }
 
   /* Features */
   .features {
     margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.55s both;
   }
-
+  .features-intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .features-copy {
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 6px;
+  }
+  .features-kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-muted);
+    margin-bottom: 0;
+  }
+  .features-intro h2 {
+    font-size: 25px;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .features-intro p {
+    color: var(--fg-soft);
+    font-size: 14px;
+    margin: 0;
+  }
+  .features-metrics {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .metric {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px 10px;
+    min-width: 96px;
+  }
+  .metric-value {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .metric-label {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-muted);
+  }
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  @media (min-width: 640px) {
-    .features-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .feature-card {
-    display: block;
-    padding: 20px;
-    border-radius: 14px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.6);
-    backdrop-filter: blur(12px);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .feature-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--coral-bright);
-    box-shadow: 0 12px 40px color-mix(in srgb, var(--coral-bright) 20%, transparent);
-  }
-
-  .feature-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-  }
-
-  .feature-icon :global(svg) {
-    width: 28px;
-    height: 28px;
-  }
-
-  .feature-title {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
-
-  .feature-desc {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  /* Integrations Preview */
-  .integrations-preview {
-    margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-  }
-
-  .integrations-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 16px;
-  }
-
-  .integration-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.6);
-    backdrop-filter: blur(8px);
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: default;
-  }
-
-  .integration-pill :global(svg) {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-  }
-
-  .integration-pill:hover {
-    border-color: var(--coral-bright);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--coral-bright) 20%, transparent);
-  }
-
-  .integrations-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 12px;
-    flex-wrap: wrap;
   }
-
-  .integrations-link {
-    color: var(--coral-bright);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-
-  .integrations-link:hover {
-    color: var(--cyan-bright);
-  }
-
-  .link-separator {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
-
-  /* Press Section */
-  .press-section {
-    margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.65s both;
-  }
-
-  .press-section .section-title {
-    margin-bottom: 20px;
-  }
-
-  .press-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  @media (max-width: 640px) {
-    .press-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .press-card {
+  .feature-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 24px 28px;
-    border-radius: 16px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.7);
-    backdrop-filter: blur(12px);
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
-  }
-
-  .press-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--coral-bright);
-    box-shadow: 0 12px 40px rgba(255, 77, 77, 0.15);
-  }
-
-  .press-logo {
-    display: flex;
-    align-items: center;
     gap: 10px;
+    padding: 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    text-decoration: none;
+    color: var(--fg);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    grid-column: span 4;
   }
-
-  .press-icon {
-    width: 28px;
-    height: 28px;
-    color: var(--text-muted);
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(400px 200px at 80% -20%, rgba(0, 0, 0, 0.06), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 0;
   }
-
-  .press-name {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
+  :global([data-theme="dark"]) .feature-card::before {
+    background: radial-gradient(400px 200px at 80% -20%, rgba(255, 255, 255, 0.08), transparent 70%);
   }
-
-  .press-quote {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.5;
-    color: var(--text-primary);
+  .feature-card > * {
+    position: relative;
+    z-index: 1;
+  }
+  .feature-card:hover {
+    border-color: var(--fg-muted);
+  }
+  .feature-card:hover::before { opacity: 0; }
+  .feature-card:active {
+    transform: scale(0.99);
+    transition-duration: 0.08s;
+  }
+  .feature-card--hero {
+    grid-column: span 7;
+    background: radial-gradient(600px 220px at 0% 0%, rgba(247, 7, 19, 0.12), transparent 60%), var(--bg);
+    padding-bottom: 150px;
+  }
+  .feature-card--hero .feature-illustration--local {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    left: auto;
+    top: auto;
     margin: 0;
-    font-style: italic;
   }
-
-  .press-author {
-    font-size: 0.9rem;
-    color: var(--coral-bright);
-    font-weight: 500;
+  :global([data-theme="dark"]) .feature-card--hero {
+    background: radial-gradient(600px 220px at 0% 0%, rgba(247, 7, 19, 0.2), transparent 60%), var(--bg);
   }
-
-  .press-featured {
-    border-color: rgba(255, 77, 77, 0.3);
-    background: linear-gradient(135deg, rgba(255, 77, 77, 0.05) 0%, rgba(10, 15, 26, 0.7) 100%);
+  .feature-card--actions {
+    grid-column: span 5;
+    background: linear-gradient(135deg, rgba(247, 7, 19, 0.08), transparent 70%), var(--bg);
   }
-
-  /* Quick Start */
-  .quickstart {
-    margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
+  .feature-card--wide {
+    grid-column: span 12;
+    background: radial-gradient(600px 220px at 100% 100%, rgba(247, 7, 19, 0.14), transparent 60%), var(--bg);
+    padding-bottom: 82px;
   }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  .feature-card--wide .feature-illustration--skills {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    left: auto;
+    top: auto;
+    margin: 0;
   }
-
-  .section-title {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .feature-card--memory {
+    background: var(--bg);
   }
-
-  .section-link {
-    font-size: 0.9rem;
-    color: var(--coral-bright);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
+  :global([data-theme="dark"]) .feature-card--memory {
+    background: var(--bg);
   }
-
-  .section-link:hover {
-    color: var(--cyan-bright);
+  .feature-card--memory::after {
+    content: none;
   }
-
-  .claw-accent {
-    color: var(--coral-bright);
-    font-weight: 700;
+  .feature-card--browser {
+    background: var(--bg);
+    box-shadow: none;
   }
-
-  .code-block {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-subtle);
+  .feature-card--browser .feature-top {
+    padding-bottom: 10px;
+    border-bottom: none;
+  }
+  .feature-decor {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .feature-illustration {
+    pointer-events: none;
+  }
+  .feature-illustration--local,
+  .feature-illustration--skills {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    left: auto;
+    top: auto;
+    z-index: 0;
+    border: 1px solid var(--border);
     border-radius: 12px;
+    background: var(--bg-soft);
+    padding: 10px;
+    display: grid;
+    gap: 6px;
+    opacity: 0.9;
+    box-sizing: border-box;
+  }
+  .feature-illustration--local {
+    width: 176px;
+    height: 104px;
+    background: var(--bg);
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 1fr 46px;
+    align-items: end;
+    gap: 8px;
+    box-shadow: inset 0 0 0 1px var(--border-soft);
+  }
+  .feature-illustration--local .local-monitor {
+    position: relative;
+    height: 64px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: linear-gradient(180deg, var(--bg-soft), var(--bg));
+    box-shadow: inset 0 0 0 1px var(--border-soft);
+  }
+  .feature-illustration--local .local-monitor::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 10px;
+    height: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .feature-illustration--local .local-monitor::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: 26px;
+    height: 2px;
+    background: var(--fg-muted);
+    box-shadow: 0 -8px 0 var(--fg-muted), 32px 0 0 var(--fg-muted);
+    opacity: 0.6;
+  }
+  .feature-illustration--local .local-tower {
+    position: relative;
+    height: 76px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: linear-gradient(180deg, var(--bg), var(--bg-soft));
+    box-shadow: inset 0 0 0 1px var(--border-soft);
+  }
+  .feature-illustration--local .local-tower::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 14px;
+    height: 2px;
+    background: var(--border);
+    box-shadow: 0 14px 0 var(--border), 0 28px 0 var(--border);
+    opacity: 0.9;
+  }
+  .feature-illustration--local .local-tower::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    bottom: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fg-muted);
+    opacity: 0.6;
+  }
+  .feature-illustration--local .local-lock {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+  }
+  .feature-illustration--local .local-lock::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 5px;
+    height: 6px;
+    border: 1px solid var(--fg-muted);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    opacity: 0.8;
+  }
+  .feature-illustration--local .local-lock::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 9px;
+    width: 4px;
+    height: 6px;
+    background: var(--fg-muted);
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+  .feature-illustration--chat {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 4px 0 2px;
+  }
+  .feature-illustration--chat span {
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-soft);
+  }
+  .feature-illustration--chat span:nth-child(1) { width: 42%; }
+  .feature-illustration--chat span:nth-child(2) { width: 28%; }
+  .feature-illustration--chat span:nth-child(3) { width: 34%; }
+  .feature-illustration--chat span:nth-child(4) { width: 24%; }
+  .feature-illustration--skills {
+    width: 150px;
+    height: 86px;
+    background: var(--bg);
+    display: block;
+    padding: 10px;
     overflow: hidden;
   }
-
-  .code-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: rgba(0, 0, 0, 0.3);
-    border-bottom: 1px solid var(--border-subtle);
+  .feature-illustration--skills .skill-card {
+    position: absolute;
+    width: 78px;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background:
+      linear-gradient(160deg, rgba(0, 0, 0, 0.06), transparent 60%),
+      var(--bg-soft);
+    box-shadow: 0 10px 16px rgba(0, 0, 0, 0.08);
   }
-
-  .code-content {
-    padding: 16px 20px;
-    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    font-size: 0.9rem;
-    line-height: 1.6;
+  .feature-illustration--skills .skill-card:nth-child(1) {
+    left: 10px;
+    top: 12px;
+    transform: rotate(-4deg);
   }
-
-  .code-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 0;
+  .feature-illustration--skills .skill-card:nth-child(2) {
+    left: 34px;
+    top: 6px;
+    transform: rotate(2deg);
   }
-
-  .code-line.comment {
-    color: var(--text-muted);
-    font-style: italic;
+  .feature-illustration--skills .skill-card:nth-child(3) {
+    right: 10px;
+    top: 24px;
+    transform: rotate(6deg);
+    background:
+      linear-gradient(160deg, rgba(0, 0, 0, 0.06), transparent 60%),
+      var(--bg);
   }
-
-  .code-line.cmd {
-    color: var(--text-primary);
+  :global([data-theme="dark"]) .feature-illustration--skills .skill-card:nth-child(3) {
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.08), transparent 60%),
+      var(--bg);
   }
-
-  .copy-line-btn {
-    opacity: 0.6;
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
+  .feature-illustration--skills .skill-badge {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-soft);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+  .feature-decor-memory {
+    position: relative;
+    height: 46px;
+  }
+  .memory-card {
+    position: absolute;
+    left: 0;
+    right: 0;
     height: 28px;
-    border: none;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
   }
-
-  .code-line:hover .copy-line-btn {
-    opacity: 1;
+  .memory-card:nth-child(1) { top: 0; transform: rotate(-1.5deg); }
+  .memory-card:nth-child(2) { top: 8px; left: 10px; right: -6px; opacity: 0.8; }
+  .memory-card:nth-child(3) { top: 16px; left: 20px; right: -12px; opacity: 0.6; }
+  .feature-decor-browser {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-soft);
   }
-
-  .copy-line-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--text-primary);
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
-
-  .copy-line-btn.copied {
-    opacity: 1;
-    background: rgba(0, 229, 204, 0.2);
-    color: var(--cyan-bright);
-  }
-
-  .copy-line-btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .code-dot {
-    width: 12px;
-    height: 12px;
+  .browser-bar span {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--text-muted);
+    background: var(--fg-muted);
+    opacity: 0.6;
   }
-
-  .code-dot:nth-child(1) { background: #ff5f57; }
-  .code-dot:nth-child(2) { background: #febc2e; }
-  .code-dot:nth-child(3) { background: #28c840; }
-
-  .code-title {
-    margin-left: auto;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
+  .browser-lines {
+    display: grid;
+    gap: 6px;
+    padding: 10px;
   }
-
-  .mode-switch,
-  .pm-switch,
-  .hackable-switch,
-  .os-switch,
-  .win-shell-switch {
-    display: flex;
-    gap: 4px;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 3px;
-    border-radius: 6px;
+  .browser-lines span {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--border);
   }
-
-  .pm-switch,
-  .hackable-switch,
-  .os-switch,
-  .win-shell-switch {
-    margin-left: auto;
-  }
-
-  .win-shell-switch {
-    margin-left: 8px;
-  }
-
-  .mode-btn,
-  .pm-btn,
-  .hackable-btn,
-  .os-btn,
-  .win-shell-btn {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    padding: 4px 10px;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-
-  .mode-btn:hover,
-  .pm-btn:hover,
-  .hackable-btn:hover,
-  .os-btn:hover,
-  .win-shell-btn:hover {
-    color: var(--text-secondary);
-  }
-
-  .pm-btn.active,
-  .hackable-btn.active,
-  .os-btn.active,
-  .win-shell-btn.active {
-    background: var(--coral-bright);
-    color: var(--bg-deep);
-    font-weight: 600;
-  }
-
-  .mode-btn.active {
-    background: var(--cyan-bright);
-    color: var(--bg-deep);
-    font-weight: 600;
-  }
-
-  /* Beta Switch */
-  .beta-switch {
-    margin-left: 8px;
-  }
-
-  /* Placeholder to prevent layout shift when no switches visible */
-  .switch-placeholder {
-    display: none;
-    height: 26px; /* Match switch button height */
-    margin-left: auto;
-  }
-
-  .beta-btn {
+  .browser-lines span:nth-child(1) { width: 80%; }
+  .browser-lines span:nth-child(2) { width: 55%; }
+  .browser-lines span:nth-child(3) { width: 70%; }
+  .feature-top {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    padding: 4px 10px;
-    border: 1px solid var(--border-subtle);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
+    justify-content: space-between;
+    gap: 12px;
   }
-
-  .beta-btn:hover {
-    border-color: var(--cyan-bright);
-    color: var(--cyan-bright);
-  }
-
-  .beta-btn.active {
-    background: rgba(0, 229, 204, 0.15);
-    border-color: var(--cyan-bright);
-    color: var(--cyan-bright);
-  }
-
-  .beta-label {
-    font-weight: 700;
-    font-size: 0.8rem;
-  }
-
-  .beta-text {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .pm-cmd,
-  .pm-install {
-    color: var(--cyan-bright);
-  }
-
-  .code-block pre {
-    padding: 20px;
-    overflow-x: auto;
-  }
-
-  .code-block code {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-  }
-
-  .code-comment {
-    color: var(--text-muted);
-  }
-
-  .code-prompt {
-    color: var(--coral-bright);
-    user-select: none;
-  }
-
-  .quickstart-note {
-    margin-top: 16px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    text-align: center;
-  }
-
-  /* OS Indicator */
-  .os-indicator {
+  .feature-icon {
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .os-detected {
-    color: var(--text-secondary);
-  }
-
-  .os-change-btn {
-    background: none;
-    border: none;
-    color: var(--coral-bright);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: all 0.15s ease;
-  }
-
-  .os-change-btn:hover {
-    background: rgba(255, 77, 77, 0.15);
-    color: var(--cyan-bright);
-  }
-
-  /* macOS App Download Section */
-  .macos-app-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 24px 16px;
-    text-align: center;
-  }
-
-  .macos-description {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .macos-tagline {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .macos-subtitle {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-  }
-
-  .macos-download-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 28px;
-    background: linear-gradient(135deg, var(--coral-bright) 0%, var(--coral-dark) 100%);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(255, 77, 77, 0.3);
-  }
-
-  .macos-download-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(255, 77, 77, 0.4);
-  }
-
-  .macos-download-btn svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .macos-meta {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  /* Footer */
-  .footer {
-    margin-top: auto;
-    padding-top: 40px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    animation: fadeInUp 0.8s ease-out 0.75s both;
-  }
-
-  .footer-nav {
-    display: flex;
     justify-content: center;
+    background: var(--accent-soft);
+    border-radius: 14px;
+    color: var(--accent);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  :global([data-theme="dark"]) .feature-icon {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .feature-pill {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    background: var(--bg-soft);
+  }
+  .feature-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .feature-card p {
+    font-size: 13px;
+    color: var(--fg-soft);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .feature-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fg-muted);
+  }
+  .feature-list li {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .feature-list li::before {
+    content: "→";
+    color: var(--accent);
+    font-size: 12px;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  .feature-cta {
+    margin-top: auto;
+    font-size: 12px;
+    color: var(--accent);
+    opacity: 0.85;
+  }
+
+  /* Integrations Teaser */
+  .integrations-teaser {
+    margin-bottom: 64px;
+  }
+  .integrations-content {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .integrations-text {
+    display: flex;
+    flex-direction: column;
     gap: 12px;
-    margin-bottom: 16px;
-    font-size: 0.95rem;
   }
-
-  .footer-separator {
-    color: var(--text-muted);
+  .integrations-kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-muted);
+    margin: 0;
   }
-
-  .footer a {
-    color: var(--coral-bright);
+  .integrations-sub {
+    font-size: 14px;
+    color: var(--fg-soft);
+    margin: 0;
+  }
+  .integrations-text h2 {
+    font-size: 22px;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+  .integrations-link {
+    color: var(--accent);
     text-decoration: none;
-    transition: color 0.2s ease;
+    font-size: 13px;
   }
-
-  .footer a:hover {
-    color: var(--cyan-bright);
+  .integrations-link:hover { opacity: 0.85; }
+  .integrations-icons {
+    display: grid;
+    grid-template-columns: repeat(5, 34px);
+    grid-auto-rows: 34px;
+    gap: 10px;
+    justify-content: end;
   }
-
-  .footer .disclaimer {
-    margin-top: 12px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    opacity: 0.7;
-  }
-
-  /* Latest Blog Post */
-  .latest-post {
-    margin-bottom: 40px;
-    animation: fadeInUp 0.8s ease-out 0.5s both;
-    text-align: center;
-  }
-
-  .latest-post-card {
-    display: inline-flex;
+  .integration-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 20px;
-    border-radius: 50px;
-    background: rgba(10, 15, 26, 0.8);
-    border: 1px solid var(--border-subtle);
+    justify-content: center;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  /* Press */
+  .press {
+    position: relative;
+    display: block;
+    margin-bottom: 56px;
+    padding: 28px 24px;
+    border-radius: 18px;
+    overflow: hidden;
+    --fg: #000000;
+    --fg-soft: #000000;
+    --fg-muted: #000000;
+  }
+  .press::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: url("/press-background.png") center / 40% no-repeat;
+    opacity: 1;
+    z-index: 0;
+    transform: rotate(90deg) scaleX(0.85);
+  }
+  .press::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: rgba(255, 255, 255, 0.25);
+    mask-image: url("/press-background.png");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: 40%;
+    -webkit-mask-image: url("/press-background.png");
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 40%;
+    z-index: 0;
+    transform: rotate(90deg) scaleX(0.85);
+  }
+  .press > * {
+    position: relative;
+    z-index: 1;
+  }
+  .press-header {
+    margin-bottom: 14px;
+  }
+  .press-header h2 {
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 10px;
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
+  }
+  .press-sub {
+    font-size: 16px;
+    color: var(--fg-muted);
+    line-height: 1.4;
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
+  }
+  .press-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .press-card {
+    position: relative;
+    padding: 16px 0;
+    background: transparent;
+    border: none;
     text-decoration: none;
-    transition: all 0.3s ease;
+    color: var(--fg);
+    transition: color 0.15s ease;
   }
-
-  .latest-post-card:hover {
-    border-color: var(--coral-bright);
-    box-shadow: 0 4px 20px rgba(255, 77, 77, 0.2);
+  .press-card + .press-card { margin-top: 10px; }
+  .press-card:hover p {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
   }
-
-  .latest-post-badge {
-    padding: 3px 8px;
-    border-radius: 12px;
-    background: var(--coral-bright);
-    color: white;
-    font-size: 0.7rem;
+  .press-source {
+    display: block;
+    font-size: 10px;
+    color: var(--fg-muted);
+    margin-bottom: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.28em;
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
+    font-variant: small-caps;
   }
-
-  .latest-post-title {
-    font-size: 0.9rem;
-    color: var(--text-primary);
+  .press-card p {
+    font-size: 21px;
+    margin-bottom: 12px;
+    line-height: 1.25;
+    color: var(--fg);
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
   }
-
-  .latest-post-link {
-    color: var(--text-muted);
-    transition: color 0.2s;
-  }
-
-  .latest-post-card:hover .latest-post-link {
-    color: var(--coral-bright);
+  .press-author {
+    font-size: 12px;
+    color: var(--fg-muted);
+    font-weight: 500;
+    font-style: italic;
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Georgia", serif;
   }
 
   /* Testimonials */
   .testimonials {
     margin-bottom: 56px;
-    animation: fadeInUp 0.8s ease-out 0.75s both;
+  }
+  .testimonials h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .marquee-container {
     overflow: hidden;
-    margin-left: -24px;
-    margin-right: -24px;
-    padding: 0 24px;
+    margin: 0 -24px 16px;
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
   }
 
-  .testimonials .section-header {
-    padding: 0 24px;
-  }
-
-  .testimonials-track {
+  .marquee {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-left: -24px;
-    margin-right: -24px;
-    overflow: hidden;
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 5%,
-      black 95%,
-      transparent
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 5%,
-      black 95%,
-      transparent
-    );
+    width: max-content;
+    animation: scroll 40s linear infinite;
   }
 
-  .testimonials-track:focus-within .testimonials-row {
+  .marquee:hover {
     animation-play-state: paused;
   }
 
-  .testimonials-row {
-    display: flex;
-    gap: 16px;
-    width: max-content;
-    padding: 8px 0;
-  }
-
-  .row-1 {
-    animation: scroll-left var(--duration, 80s) linear infinite;
-  }
-
-  .row-2 {
-    animation: scroll-right var(--duration, 90s) linear infinite;
-  }
-
-  @keyframes scroll-left {
+  @keyframes scroll {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
 
-  @keyframes scroll-right {
-    from { transform: translateX(-50%); }
-    to { transform: translateX(0); }
-  }
-
-  .testimonial-card {
+  .marquee-content {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-    min-width: 320px;
-    max-width: 400px;
-    border-radius: 12px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.7);
-    backdrop-filter: blur(8px);
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
+    gap: 16px;
+    padding: 0 8px;
   }
 
-  .testimonial-card:hover {
-    border-color: var(--coral-bright);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(255, 77, 77, 0.15);
-  }
-
-  .testimonials-row:hover {
-    animation-play-state: paused;
-  }
-
-  .testimonial-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    border: 2px solid var(--border-subtle);
-    background: var(--bg-elevated);
-  }
-
-  .testimonial-content {
+  .testimonial {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    min-width: 0;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    text-decoration: none;
+    color: var(--fg);
+    transition: border-color 0.15s ease, filter 0.15s ease;
+    min-width: 300px;
+    max-width: 340px;
   }
-
+  .testimonial:hover {
+    border-color: var(--fg-muted);
+    filter: brightness(0.97);
+  }
+  :global([data-theme="dark"]) .testimonial:hover {
+    filter: brightness(1.05);
+  }
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .testimonial-header img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .testimonial-author {
+    flex: 1;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .x-icon {
+    color: var(--fg-muted);
+    flex-shrink: 0;
+  }
   .testimonial-quote {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--text-secondary);
+    font-size: 13px;
+    color: var(--fg-soft);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-height: 1.5;
   }
+  .link {
+    display: block;
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .link:hover { color: var(--accent); }
 
-  .testimonial-author {
-    font-size: 0.8rem;
+  /* CTA Section */
+  .cta-section {
+    text-align: center;
+    padding: 32px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    margin-bottom: 40px;
+  }
+  .cta-section h2 {
+    font-size: 18px;
     font-weight: 600;
-    color: var(--coral-bright);
+    margin-bottom: 6px;
+  }
+  .cta-section p {
+    color: var(--fg-muted);
+    font-size: 14px;
+    margin-bottom: 16px;
   }
 
-  /* Responsive */
-  @media (max-width: 480px) {
-    .container {
-      padding: 40px 16px 32px;
-    }
-
-    .lobster-icon {
-      width: 80px;
-      height: 80px;
-    }
-
-    .cta {
-      padding: 20px 12px;
-    }
-
-    .cta-label {
-      font-size: 0.9rem;
-    }
-
-    .testimonials {
-      margin-left: -16px;
-      margin-right: -16px;
-      padding: 0 16px;
-    }
-
-    .testimonials .section-title {
-      padding-left: 16px;
-    }
-
-    .testimonials-track {
-      margin-left: -16px;
-      margin-right: -16px;
-    }
-
-    .testimonial-card {
-      min-width: 280px;
-      max-width: 320px;
-      padding: 12px;
-    }
-
-    .testimonial-avatar {
-      width: 36px;
-      height: 36px;
-    }
-
-    .testimonial-quote {
-      font-size: 0.85rem;
-    }
-
-    /* Quick Start mobile layout */
-    .code-header {
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .code-dot {
-      order: 0;
-    }
-
-    /* Contextual switches appear first (after dots), right-aligned */
-    .os-indicator,
-    .os-switch,
-    .win-shell-switch,
-    .pm-switch,
-    .hackable-switch,
-    .beta-switch,
-    .switch-placeholder {
-      order: 1;
-      margin-left: auto;
-    }
-
-    .win-shell-switch {
-      margin-left: 4px;
-    }
-
-    /* Mode tabs appear last */
-    .mode-switch {
-      order: 2;
-      width: 100%;
-      justify-content: center;
-      margin-top: 4px;
-    }
-
-    .mode-btn {
-      padding: 6px 8px;
-      font-size: 0.65rem;
-    }
-
-    .os-btn,
-    .pm-btn,
-    .win-shell-btn {
-      padding: 4px 8px;
-      font-size: 0.65rem;
-    }
-
-    .code-content {
-      padding: 12px 14px;
-      font-size: 0.65rem;
-    }
-
-    .code-line {
-      gap: 6px;
-    }
-
-    .macos-download-btn {
-      padding: 12px 20px;
-      font-size: 0.9rem;
-    }
+  /* Links Grid */
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 18px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.15s ease;
+    color: var(--fg-muted);
+  }
+  .link-card:hover {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: var(--fg-muted);
+  }
+  :global([data-theme="dark"]) .link-card:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .link-card:active {
+    transform: scale(0.98);
+    transition-duration: 0.08s;
+  }
+  .link-card svg {
+    color: var(--fg-muted);
+    transition: color 0.15s ease;
+  }
+  .link-card:hover svg {
+    color: var(--fg);
+  }
+  .link-card strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .link-card span {
+    font-size: 11px;
   }
 
-  /* Accessibility Utilities */
-
-  /* Hides content visually but keeps it available for screen readers */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+  /* Newsletter */
+  .newsletter {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .newsletter h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .newsletter p {
+    color: var(--fg-muted);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .newsletter form {
+    display: flex;
+    gap: 8px;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .newsletter input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    font-size: 13px;
+    background: transparent;
+    color: var(--fg);
+    transition: border-color 0.15s;
+  }
+  .newsletter input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .newsletter input::placeholder {
+    color: var(--fg-muted);
+  }
+  .newsletter button {
+    padding: 12px 20px;
+    background: #F70713;
+    border: none;
+    border-radius: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+    z-index: 1;
+  }
+  .newsletter button:active {
+    transform: scale(0.97);
+    transition-duration: 0.08s;
+  }
+  .newsletter button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 13, 0.45) 0%, rgba(255, 0, 13, 0.9) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
+  }
+  :global([data-theme="dark"]) .newsletter button::before {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 100, 100, 0.9) 0%, rgba(247, 7, 19, 1) 100%);
+  }
+  .newsletter button:hover::before {
+    opacity: 1;
   }
 
-  /* Global Focus State: Replaces the default browser ring with your theme colors */
-  :focus-visible {
-    outline: 3px solid var(--cyan-bright);
-    outline-offset: 4px;
-    border-radius: 4px;
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  footer nav {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  footer nav a {
+    color: var(--fg-soft);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  footer nav a:hover { color: var(--fg); }
+  footer p {
+    font-size: 13px;
+    color: var(--fg-muted);
+    margin-bottom: 4px;
+  }
+  footer p a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  footer .disclaimer {
+    font-size: 12px;
   }
 
-  /* Respect user's system settings for reduced motion */
+  /* Hamburger & Mobile Menu */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--fg-muted);
+    transition: color 0.15s;
+  }
+  .hamburger:hover { color: var(--fg); }
+  .hamburger .close-icon { display: none; }
+  .hamburger.active .hamburger-icon { display: none; }
+  .hamburger.active .close-icon { display: block; }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg);
+    padding: 24px;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+  .mobile-menu.active { display: flex; }
+  .mobile-menu a {
+    display: block;
+    padding: 16px;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 15px;
+    transition: background 0.15s;
+  }
+  .mobile-menu a:hover {
+    background: var(--bg-soft);
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .features-intro {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .features-metrics { justify-content: flex-start; }
+    .integrations-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .integrations-icons { justify-content: flex-start; }
+    .features-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .feature-card,
+    .feature-card--hero,
+    .feature-card--actions,
+    .feature-card--wide {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero { padding: 40px 0 32px; }
+    .hero h1 { font-size: 26px; }
+    .hero-sub { font-size: 15px; }
+    .hero-actions { gap: 8px; }
+    .hero-actions .btn { padding: 12px 18px; font-size: 14px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-card,
+    .feature-card--hero,
+    .feature-card--actions,
+    .feature-card--wide {
+      grid-column: span 1;
+    }
+    .feature-card--hero,
+    .feature-card--wide {
+      padding-bottom: 18px;
+    }
+    .feature-illustration--local,
+    .feature-illustration--skills {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      width: 100%;
+      height: auto;
+    }
+    .feature-illustration--local { min-height: 104px; }
+    .feature-illustration--skills { min-height: 86px; }
+    .integrations-icons {
+      grid-template-columns: repeat(3, 30px);
+      grid-auto-rows: 30px;
+    }
+    .integration-icon { width: 30px; height: 30px; }
+    .integration-icon svg { width: 16px; height: 16px; }
+    .press {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px 0;
+    }
+    .press-header {
+      margin-bottom: 12px;
+    }
+    .press-grid { grid-template-columns: 1fr; }
+    .links-grid { grid-template-columns: repeat(2, 1fr); }
+    .newsletter form { flex-direction: column; }
+  }
+
+  /* === EASTER EGG STYLES === */
+
+  /* 1. Logo dance animation */
+  @keyframes lobsterDance {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.2) rotate(-10deg); }
+    50% { transform: scale(1.3) rotate(10deg); }
+    75% { transform: scale(1.2) rotate(-5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  /* 2. Konami party mode */
+  :global(.party-mode) {
+    animation: rainbow 0.5s linear infinite;
+  }
+  :global(.party-mode) * {
+    animation: wiggle 0.2s ease-in-out infinite alternate;
+  }
+  @keyframes rainbow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+  @keyframes wiggle {
+    from { transform: rotate(-1deg); }
+    to { transform: rotate(1deg); }
+  }
+
+  /* 3. Code block glow style - always on */
+  .code-body {
+    background: #fff;
+    animation: codeGlow 2s ease-in-out infinite alternate;
+  }
+  :global([data-theme="dark"]) .code-body {
+    background: #000;
+  }
+  .code-line code,
+  .code-prompt {
+    color: #F70713 !important;
+    text-shadow: 0 0 3px rgba(247, 7, 19, 0.5);
+    animation: codeFlicker 0.1s linear infinite;
+  }
+  .code-comment {
+    color: rgba(247, 7, 19, 0.75) !important;
+    text-shadow: 0 0 3px rgba(247, 7, 19, 0.35);
+    animation: codeFlicker 0.1s linear infinite;
+  }
+  @keyframes codeGlow {
+    from { box-shadow: inset 0 0 15px rgba(247, 7, 19, 0.1); }
+    to { box-shadow: inset 0 0 30px rgba(247, 7, 19, 0.2); }
+  }
+  :global([data-theme="dark"]) .code-body {
+    animation-name: codeGlowDark;
+  }
+  @keyframes codeGlowDark {
+    from { box-shadow: inset 0 0 20px rgba(247, 7, 19, 0.2); }
+    to { box-shadow: inset 0 0 40px rgba(247, 7, 19, 0.3); }
+  }
+  @keyframes codeFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.95; }
+  }
+
+
+  /* 5. Glitch text effect */
+  .glitch-text {
+    animation: glitch 0.5s linear;
+    position: relative;
+  }
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    10% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+    20% { transform: translate(2px, -2px); clip-path: inset(20% 0 60% 0); }
+    30% { transform: translate(-2px, 2px); clip-path: inset(60% 0 20% 0); }
+    40% { transform: translate(2px, -2px); filter: hue-rotate(180deg); }
+    50% { transform: translate(-2px, 2px); clip-path: inset(40% 0 40% 0); }
+    60% { transform: translate(2px, -2px); filter: hue-rotate(270deg); }
+    70% { transform: translate(-2px, 2px); clip-path: inset(10% 0 80% 0); }
+    80% { transform: translate(2px, -2px); clip-path: inset(80% 0 10% 0); }
+    90% { transform: translate(-2px, 2px); filter: hue-rotate(360deg); }
+    100% { transform: translate(0); clip-path: none; filter: none; }
+  }
+
+  /* 6. Copy confetti */
+  :global(.confetti) {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confettiBurst 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  @keyframes confettiBurst {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--tx), var(--ty)) rotate(var(--r)) scale(0);
+      opacity: 0;
+    }
+  }
+
+  /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+    :global(.party-mode),
+    :global(.party-mode) *,
+    .code-body,
+    .code-line code,
+    .code-comment,
+    .code-prompt,
+    .glitch-text,
+    :global(.confetti) {
+      animation: none !important;
     }
   }
 </style>

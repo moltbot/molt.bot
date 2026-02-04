@@ -12,701 +12,328 @@ import {
   siLinux, siAndroid, siMacos, siIos
 } from 'simple-icons';
 
-// Helper to create SVG from simple-icons
 const siIcon = (icon: any) => icon.path;
 
-const tlonIcon = {
-  viewBox: '0 0 160 160',
-  paths: [
-    {
-      d: 'M155 0H5a5 5 0 0 0-5 5v32.5a5 5 0 0 0 5 5h45c5.523 0 10 4.477 10 10v26.25a8.75 8.75 0 1 1-17.5 0V60a5 5 0 0 0-5-5H5a5 5 0 0 0-5 5v90c0 5.523 4.477 10 10 10h140c5.523 0 10-4.477 10-10V60a5 5 0 0 0-5-5h-32.5a5 5 0 0 0-5 5v18.75a8.75 8.75 0 0 1-17.5 0V52.5c0-5.523 4.477-10 10-10h45a5 5 0 0 0 5-5V5a5 5 0 0 0-5-5Z',
-      fill: 'currentColor',
-    },
-  ],
-};
-
-const bluebubblesIcon = {
-  viewBox: '0 0 1365.3333 1365.3333',
-  paths: [
-    {
-      d: 'm 282.22721,1212.3333 c -0.32825,-0.55 5.69752,-7.9 13.39061,-16.3334 33.18551,-36.3787 58.29388,-71.8345 75.23815,-106.2446 3.73304,-7.581 6.49275,-14.9172 6.24837,-16.6103 -0.33979,-2.3541 -4.59263,-5.3585 -19.01354,-13.432 -35.70283,-19.988 -61.53807,-37.8784 -94.09756,-65.16095 C 171.16156,916.76576 112.27757,812.10599 97.896372,699.33329 94.781572,674.90803 95.839037,616.72973 99.883646,589.99996 118.62238,466.16054 192.89128,353.15325 307.52801,274.04905 c 57.51358,-39.6868 119.86684,-68.77221 189.80529,-88.5369 92.27163,-26.07607 195.5171,-32.19794 293.28166,-17.38993 105.07046,15.91459 206.27664,57.29422 286.05164,116.95639 75.1003,56.16607 128.5993,122.56089 162.9707,202.25469 14.9183,34.58952 25.5556,73.82394 31.2695,115.33333 2.6514,19.262 2.2488,79.05098 -0.6734,99.99999 -7.1973,51.59646 -20.2747,93.78278 -43.0198,138.77775 -22.0789,43.67702 -49.2989,81.42109 -85.8471,119.03834 -86.2635,88.78679 -206.62891,149.79589 -339.60566,172.13449 -90.53541,15.2089 -180.99947,12.7908 -270.90069,-7.2411 -7.2654,-1.6189 -12.28279,-2.1026 -14.20992,-1.3699 -1.63845,0.6229 -11.60503,6.331 -22.14796,12.6847 -36.3239,21.8903 -86.62516,44.5647 -128.50229,57.925 -38.8873,12.4065 -81.55656,21.4307 -83.77277,17.7174 z',
-      fill: 'none',
-      stroke: 'currentColor',
-      strokeWidth: 96,
-      strokeLinejoin: 'miter',
-    },
-    {
-      d: 'M 548.89728 654.54889 A 80 80 0 1 0 388.89728 654.54889 A 80 80 0 1 0 548.89728 654.54889 Z',
-      fill: 'currentColor',
-    },
-    {
-      d: 'M 762.66663 654.54889 A 80 80 0 1 0 602.66663 654.54889 A 80 80 0 1 0 762.66663 654.54889 Z',
-      fill: 'currentColor',
-    },
-    {
-      d: 'M 976.43597 654.54889 A 80 80 0 1 0 816.43597 654.54889 A 80 80 0 1 0 976.43597 654.54889 Z',
-      fill: 'currentColor',
-    },
-  ],
-};
-
 const chatProviders = [
-  { name: 'WhatsApp', icon: siIcon(siWhatsapp), color: '#25D366', desc: 'QR pairing via Baileys', docs: 'https://clawhub.com/skills/wacli' },
-  { name: 'Telegram', icon: siIcon(siTelegram), color: '#26A5E4', desc: 'Bot API via grammY', docs: 'https://docs.openclaw.ai/telegram' },
-  { name: 'Discord', icon: siIcon(siDiscord), color: '#5865F2', desc: 'Servers, channels & DMs', docs: 'https://clawhub.com/skills/discord' },
-  { name: 'Slack', icon: 'lucide:hash', color: '#E01E5A', desc: 'Workspace apps via Bolt', docs: 'https://clawhub.com/skills/slack' },
-  { name: 'Signal', icon: siIcon(siSignal), color: '#3A76F0', desc: 'Privacy-focused via signal-cli', docs: 'https://clawhub.com/skills/sag' },
-  { name: 'iMessage', icon: siIcon(siApple), color: '#007AFF', desc: 'iMessage via imsg (AppleScript bridge)', docs: 'https://github.com/steipete/imsg' },
-  { name: 'iMessage', icon: bluebubblesIcon, color: '#3B82F6', desc: 'iMessage via BlueBubbles server', docs: 'https://docs.openclaw.ai/channels/bluebubbles' },
-  { name: 'Microsoft Teams', icon: 'lucide:users', color: '#6264A7', desc: 'Enterprise support', docs: 'https://docs.openclaw.ai/msteams' },
-  { name: 'Nextcloud Talk', icon: siIcon(siNextcloud), color: '#0082C9', desc: 'Self-hosted Nextcloud chat', docs: 'https://docs.openclaw.ai/channels/nextcloud-talk' },
-  { name: 'Matrix', icon: siIcon(siMatrix), color: '#000000', desc: 'Matrix protocol', docs: 'https://docs.openclaw.ai/channels/matrix' },
-  { name: 'Nostr', icon: 'lucide:message-circle', color: '#8F2CFF', desc: 'Decentralized DMs via NIP-04', docs: 'https://docs.openclaw.ai/channels/nostr' },
-  { name: 'Tlon Messenger', icon: tlonIcon, color: '#FFFFFF', desc: 'P2P ownership-first chat', docs: 'https://docs.urbit.org' },
-  { name: 'Zalo', icon: siIcon(siZalo), color: '#0068FF', desc: 'Zalo Bot API', docs: 'https://docs.openclaw.ai/channels/zalo' },
-  { name: 'Zalo Personal', icon: siIcon(siZalo), color: '#0068FF', desc: 'Personal account via QR login', docs: 'https://docs.openclaw.ai/channels/zalouser' },
-  { name: 'WebChat', icon: 'lucide:globe', color: '#00E5CC', desc: 'Browser-based UI', docs: 'https://docs.openclaw.ai/webchat' },
+  { name: 'WhatsApp', icon: siIcon(siWhatsapp), color: '#25D366', url: 'https://www.clawhub.com/skills/wacli' },
+  { name: 'Telegram', icon: siIcon(siTelegram), color: '#26A5E4', url: 'https://docs.openclaw.ai/channels/telegram' },
+  { name: 'Discord', icon: siIcon(siDiscord), color: '#5865F2', url: 'https://clawhub.com/skills/discord' },
+  { name: 'Slack', icon: 'lucide:hash', color: '#E01E5A', url: 'https://clawhub.com/skills/slack' },
+  { name: 'Signal', icon: siIcon(siSignal), color: '#3A76F0', url: 'https://clawhub.com/skills/sag' },
+  { name: 'iMessage', icon: siIcon(siApple), color: '#A2AAAD', url: 'https://github.com/steipete/imsg' },
+  { name: 'Matrix', icon: siIcon(siMatrix), color: '#0DBD8B', url: 'https://docs.openclaw.ai/channels/matrix' },
+  { name: 'Nextcloud', icon: siIcon(siNextcloud), color: '#0082C9', url: 'https://docs.openclaw.ai/channels/nextcloud-talk' },
 ];
 
 const modelProviders = [
-  { name: 'Anthropic', icon: siIcon(siAnthropic), color: '#D4A574', desc: 'Claude Pro/Max + Opus 4.5', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'OpenAI', icon: 'lucide:bot', color: '#00A67E', desc: 'GPT-4, GPT-5, o1', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'Google', icon: siIcon(siGoogle), color: '#4285F4', desc: 'Gemini 2.5 Pro/Flash', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'xAI', icon: siIcon(siX), color: '#FFFFFF', desc: 'Grok 3 & 4', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'OpenRouter', icon: 'lucide:zap', color: '#6366F1', desc: 'Unified API gateway', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'Mistral', icon: siIcon(siMistralai), color: '#FF7000', desc: 'Mistral Large & Codestral', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'DeepSeek', icon: 'lucide:brain', color: '#4D6BFE', desc: 'DeepSeek V3 & R1', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'GLM', icon: 'lucide:message-circle', color: '#00D4AA', desc: 'ChatGLM models', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'Perplexity', icon: siIcon(siPerplexity), color: '#20B8CD', desc: 'Search-augmented AI', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'Hugging Face', icon: siIcon(siHuggingface), color: '#FFD21E', desc: 'Open-source models', docs: 'https://docs.openclaw.ai/models' },
-  { name: 'Local Models', icon: siIcon(siOllama), color: '#FFFFFF', desc: 'Ollama, LM Studio', docs: 'https://docs.openclaw.ai/models' },
+  { name: 'Anthropic', icon: siIcon(siAnthropic), color: '#D4A574', url: 'https://docs.openclaw.ai/concepts/models' },
+  { name: 'OpenAI', icon: 'lucide:bot', color: '#00A67E', url: 'https://docs.openclaw.ai/concepts/models' },
+  { name: 'Google', icon: siIcon(siGoogle), color: '#4285F4', url: 'https://docs.openclaw.ai/concepts/models' },
+  { name: 'Mistral', icon: siIcon(siMistralai), color: '#FF7000', url: 'https://docs.openclaw.ai/concepts/models' },
+  { name: 'Ollama', icon: siIcon(siOllama), color: '#6b7280', url: 'https://docs.openclaw.ai/concepts/models' },
+  { name: 'Perplexity', icon: siIcon(siPerplexity), color: '#20B8CD', url: 'https://docs.openclaw.ai/concepts/models' },
 ];
 
-const companionApps = [
-  { name: 'macOS', icon: siIcon(siMacos), color: '#FFFFFF', desc: 'Menu bar app + Voice Wake', docs: 'https://docs.openclaw.ai/macos' },
-  { name: 'iOS', icon: siIcon(siIos), color: '#007AFF', desc: 'Canvas, camera, Voice Wake', docs: 'https://docs.openclaw.ai/ios' },
-  { name: 'Android', icon: siIcon(siAndroid), color: '#34A853', desc: 'Canvas, camera, screen', docs: 'https://docs.openclaw.ai/android' },
-  { name: 'Windows', icon: 'lucide:monitor', color: '#0078D4', desc: 'WSL2 recommended', docs: 'https://docs.openclaw.ai/windows' },
-  { name: 'Linux', icon: siIcon(siLinux), color: '#FCC624', desc: 'Native support', docs: 'https://docs.openclaw.ai/linux' },
-];
-
-const productivityApps = [
-  { name: 'Apple Notes', icon: 'lucide:sticky-note', color: '#FFCC00', desc: 'Native macOS/iOS notes', docs: 'https://clawhub.com/skills/apple-notes' },
-  { name: 'Apple Reminders', icon: 'lucide:check-square', color: '#FF9500', desc: 'Task management', docs: 'https://clawhub.com/skills/apple-reminders' },
-  { name: 'Things 3', icon: 'lucide:list-todo', color: '#4A90D9', desc: 'GTD task manager', docs: 'https://clawhub.com/skills/things-mac' },
-  { name: 'Notion', icon: siIcon(siNotion), color: '#FFFFFF', desc: 'Workspace & databases', docs: 'https://clawhub.com/skills' },
-  { name: 'Obsidian', icon: siIcon(siObsidian), color: '#7C3AED', desc: 'Knowledge graph notes', docs: 'https://clawhub.com/skills/obsidian' },
-  { name: 'Bear Notes', icon: 'lucide:pen-tool', color: '#DD4C4F', desc: 'Markdown notes', docs: 'https://clawhub.com/skills' },
-  { name: 'Trello', icon: siIcon(siTrello), color: '#0079BF', desc: 'Kanban boards', docs: 'https://clawhub.com/skills/trello' },
-  { name: 'GitHub', icon: siIcon(siGithub), color: '#FFFFFF', desc: 'Code, issues, PRs', docs: 'https://clawhub.com/skills' },
-];
-
-const musicAudio = [
-  { name: 'Spotify', icon: siIcon(siSpotify), color: '#1DB954', desc: 'Music playback control', docs: 'https://clawhub.com/skills/spotify-player' },
-  { name: 'Sonos', icon: siIcon(siSonos), color: '#FFFFFF', desc: 'Multi-room audio', docs: 'https://clawhub.com/skills/sonoscli' },
-  { name: 'Shazam', icon: siIcon(siShazam), color: '#0088FF', desc: 'Song recognition', docs: 'https://clawhub.com/skills/songsee' },
+const productivity = [
+  { name: 'Notion', icon: siIcon(siNotion), color: '#9ca3af', url: 'https://www.clawhub.com/skills' },
+  { name: 'Obsidian', icon: siIcon(siObsidian), color: '#7C3AED', url: 'https://clawhub.com/skills/obsidian' },
+  { name: 'Trello', icon: siIcon(siTrello), color: '#0079BF', url: 'https://clawhub.com/skills/trello' },
+  { name: 'GitHub', icon: siIcon(siGithub), color: '#6b7280', url: 'https://www.clawhub.com/skills' },
 ];
 
 const smartHome = [
-  { name: 'Philips Hue', icon: siIcon(siPhilipshue), color: '#0065D3', desc: 'Smart lighting', docs: 'https://clawhub.com/skills/openhue' },
-  { name: '8Sleep', icon: 'lucide:bed', color: '#00B4D8', desc: 'Smart mattress', docs: 'https://clawhub.com/skills/eightctl' },
-  { name: 'Home Assistant', icon: siIcon(siHomeassistant), color: '#41BDF5', desc: 'Home automation hub', docs: 'https://clawhub.com/skills/homeassistant' },
+  { name: 'Philips Hue', icon: siIcon(siPhilipshue), color: '#0065D3', url: 'https://www.clawhub.com/skills/openhue' },
+  { name: 'Home Assistant', icon: siIcon(siHomeassistant), color: '#41BDF5', url: 'https://www.clawhub.com/skills/homeassistant' },
+  { name: 'Spotify', icon: siIcon(siSpotify), color: '#1DB954', url: 'https://www.clawhub.com/skills/spotify-player' },
+  { name: 'Sonos', icon: siIcon(siSonos), color: '#6b7280', url: 'https://clawhub.com/skills/sonoscli' },
 ];
 
 const tools = [
-  { name: 'Browser', icon: siIcon(siGooglechrome), color: '#4285F4', desc: 'Chrome/Chromium control', docs: 'https://clawhub.com/skills/verify-on-browser' },
-  { name: 'Canvas', icon: 'lucide:monitor-smartphone', color: '#FF4500', desc: 'Visual workspace + A2UI', docs: 'https://docs.openclaw.ai/mac/canvas' },
-  { name: 'Voice', icon: 'lucide:mic', color: '#9B59B6', desc: 'Voice Wake + Talk Mode', docs: 'https://clawhub.com/skills/voice-transcribe' },
-  { name: 'Gmail', icon: siIcon(siGmail), color: '#EA4335', desc: 'Pub/Sub email triggers', docs: 'https://docs.openclaw.ai/gmail-pubsub' },
-  { name: 'Cron', icon: 'lucide:clock', color: '#F39C12', desc: 'Scheduled tasks', docs: 'https://docs.openclaw.ai/cron' },
-  { name: 'Webhooks', icon: 'lucide:webhook', color: '#1ABC9C', desc: 'External triggers', docs: 'https://docs.openclaw.ai/webhook' },
-  { name: '1Password', icon: siIcon(si1password), color: '#0572EC', desc: 'Secure credentials', docs: 'https://clawhub.com/skills/1password' },
-  { name: 'Weather', icon: 'lucide:cloud-sun', color: '#FFB300', desc: 'Forecasts & conditions', docs: 'https://clawhub.com/skills/weather' },
+  { name: 'Browser', icon: siIcon(siGooglechrome), color: '#4285F4', url: 'https://clawhub.com/skills/verify-on-browser' },
+  { name: 'Gmail', icon: siIcon(siGmail), color: '#EA4335', url: 'https://docs.openclaw.ai/automation/gmail-pubsub' },
+  { name: '1Password', icon: siIcon(si1password), color: '#0572EC', url: 'https://clawhub.com/skills/1password' },
+  { name: 'Twitter/X', icon: siIcon(siX), color: '#6b7280', url: 'https://www.clawhub.com/skills/bird' },
 ];
 
-const mediaCreative = [
-  { name: 'Image Gen', icon: 'lucide:image', color: '#E91E63', desc: 'AI image generation', docs: 'https://clawhub.com/skills' },
-  { name: 'GIF Search', icon: 'lucide:search', color: '#00DCDC', desc: 'Find the perfect GIF', docs: 'https://clawhub.com/skills/gifgrep' },
-  { name: 'Peekaboo', icon: 'lucide:eye', color: '#FF6B6B', desc: 'Screen capture & control', docs: 'https://clawhub.com/skills/peekaboo' },
-  { name: 'Camera', icon: 'lucide:camera', color: '#607D8B', desc: 'Photo/video capture', docs: 'https://clawhub.com/skills' },
+const platforms = [
+  { name: 'macOS', icon: siIcon(siMacos), color: '#A2AAAD', url: 'https://docs.openclaw.ai/platforms/macos' },
+  { name: 'iOS', icon: siIcon(siIos), color: '#007AFF', url: 'https://docs.openclaw.ai/platforms/ios' },
+  { name: 'Android', icon: siIcon(siAndroid), color: '#34A853', url: 'https://docs.openclaw.ai/platforms/android' },
+  { name: 'Linux', icon: siIcon(siLinux), color: '#FCC624', url: 'https://docs.openclaw.ai/platforms/linux' },
 ];
 
-const socialComms = [
-  { name: 'Twitter/X', icon: siIcon(siX), color: '#FFFFFF', desc: 'Tweet, reply, search', docs: 'https://clawhub.com/skills/bird' },
-  { name: 'Email', icon: 'lucide:mail', color: '#D44638', desc: 'Send & read emails', docs: 'https://clawhub.com/skills/himalaya' },
-];
-
-const showcase = [
-  { name: 'Tesco Autopilot', icon: 'lucide:shopping-cart', color: '#00539F', desc: 'Automated grocery shopping', docs: 'https://docs.openclaw.ai/start/showcase' },
-  { name: 'Bambu Control', icon: 'lucide:printer', color: '#00AE42', desc: '3D printer management', docs: 'https://docs.openclaw.ai/start/showcase' },
-  { name: 'Oura Ring', icon: 'lucide:heart', color: '#E4B363', desc: 'Health data insights', docs: 'https://docs.openclaw.ai/start/showcase' },
-  { name: 'Food Ordering', icon: 'lucide:utensils-crossed', color: '#FF5A5F', desc: 'Foodora integration', docs: 'https://docs.openclaw.ai/start/showcase' },
+const sections = [
+  { title: 'Chat Providers', desc: 'Message OpenClaw from any chat app', items: chatProviders },
+  { title: 'AI Models', desc: 'Use any model — cloud or local', items: modelProviders },
+  { title: 'Productivity', desc: 'Notes, tasks, and code', items: productivity },
+  { title: 'Smart Home & Media', desc: 'Control your lights, music, and more', items: smartHome },
+  { title: 'Tools', desc: 'Browser, email, and social', items: tools },
+  { title: 'Platforms', desc: 'Run everywhere', items: platforms },
 ];
 ---
 
 <Layout title="Integrations — OpenClaw">
-  <div class="stars"></div>
-  <div class="nebula"></div>
+  <nav class="nav">
+    <a href="/" class="nav-logo">
+      <img src="/logo.png" alt="OpenClaw" class="logo light-logo" />
+      <img src="/logo-dark.png" alt="OpenClaw" class="logo dark-logo" />
+    </a>
+    <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+      <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </nav>
 
   <main class="container">
-    <header class="hero">
-      <a href="/" class="back-link">← Back to home</a>
-      <h1 class="title">Integrations</h1>
-      <p class="description">
-        50+ integrations with the apps and services you already use.<br/>
-        Chat from your phone, control from your desktop, automate everything.
-      </p>
+    <header class="header">
+      <a href="/" class="back">&larr; Home</a>
+      <h1>Integrations</h1>
+      <p>50+ integrations with the apps and services you already use</p>
     </header>
 
-    <!-- Chat Providers -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Chat Providers
-      </h2>
-      <p class="section-desc">Message OpenClaw from any chat app — it responds right where you are.</p>
-      <div class="grid">
-        {chatProviders.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
+    {sections.map((section) => (
+      <section class="section">
+        <h2>{section.title}</h2>
+        <p class="section-desc">{section.desc}</p>
+        <div class="grid">
+          {section.items.map((item) => (
+            <a class="card" href={item.url}>
+              <Icon icon={item.icon} color={item.color} size={28} />
+              <span>{item.name}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="cta">
+      <h2>Ready to get started?</h2>
+      <p>Install OpenClaw and connect your first app</p>
+      <a href="https://docs.openclaw.ai/getting-started" class="btn">Get Started</a>
     </section>
 
-    <!-- Model Providers -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> AI Models
-      </h2>
-      <p class="section-desc">Use any model you want — cloud or local. Your keys, your choice.</p>
-      <div class="grid">
-        {modelProviders.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Productivity Apps -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Productivity
-      </h2>
-      <p class="section-desc">Notes, tasks, wikis, and code — OpenClaw works with your favorite tools.</p>
-      <div class="grid">
-        {productivityApps.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Music & Audio -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Music & Audio
-      </h2>
-      <p class="section-desc">Control playback, identify songs, and manage multi-room audio.</p>
-      <div class="grid grid-3">
-        {musicAudio.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Smart Home -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Smart Home
-      </h2>
-      <p class="section-desc">Lights, thermostats, and IoT devices — all voice-controllable.</p>
-      <div class="grid grid-3">
-        {smartHome.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Tools & Automation -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Tools & Automation
-      </h2>
-      <p class="section-desc">Browser control, scheduled tasks, email triggers, and more.</p>
-      <div class="grid">
-        {tools.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Media & Creative -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Media & Creative
-      </h2>
-      <p class="section-desc">Generate images, capture screens, and find the perfect GIF.</p>
-      <div class="grid">
-        {mediaCreative.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Social & Communication -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Social
-      </h2>
-      <p class="section-desc">Post tweets, manage email, and stay connected.</p>
-      <div class="grid grid-2">
-        {socialComms.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Companion Apps / Platforms -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Platforms
-      </h2>
-      <p class="section-desc">
-        Run the Gateway anywhere. Use companion apps for voice, camera, and native features.<br/>
-        <strong>Mobile access:</strong> Chat via WhatsApp/Telegram from your phone — no app install needed.
-      </p>
-      <div class="grid">
-        {companionApps.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-
-    <!-- Community Showcase -->
-    <section class="section">
-      <h2 class="section-title">
-        <span class="claw-accent">⟩</span> Community Showcase
-      </h2>
-      <p class="section-desc">Impressive integrations built by the community.</p>
-      <div class="grid">
-        {showcase.map((p) => (
-          <a href={p.docs} target="_blank" rel="noopener" class="card showcase-card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
-            <h3 class="card-name">{p.name}</h3>
-            <p class="card-desc">{p.desc}</p>
-          </a>
-        ))}
-      </div>
-      <div style="text-align: center; margin-top: 24px;">
-        <a href="https://docs.openclaw.ai/start/showcase" target="_blank" rel="noopener" class="showcase-link">View all showcase projects →</a>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section">
-      <h2 class="cta-title">Ready to get started?</h2>
-      <p class="cta-desc">Install OpenClaw and connect your first provider in minutes.</p>
-      <a href="/" class="cta-button">Get Started</a>
-    </section>
-
-    <!-- ClawHub CTA -->
-    <section class="clawhub-cta">
-      <h2 class="clawhub-title">Want More Skills?</h2>
-      <p class="clawhub-desc">Discover 100+ community-built skills on ClawHub — the public registry for sharing and discovering agent capabilities.</p>
-      <a href="https://clawhub.com" target="_blank" rel="noopener" class="clawhub-button">
-        Browse ClawHub →
-      </a>
+    <section class="clawhub">
+      <h2>Want more?</h2>
+      <p>Browse 100+ community-built skills on ClawHub</p>
+      <a href="https://clawhub.com" target="_blank" class="btn btn-secondary">Browse ClawHub &rarr;</a>
     </section>
 
     <footer class="footer">
-      <nav class="footer-nav">
+      <nav>
         <a href="/">Home</a>
-        <span class="footer-separator">·</span>
         <a href="/blog">Blog</a>
-        <span class="footer-separator">·</span>
         <a href="/showcase">Showcase</a>
-        <span class="footer-separator">·</span>
-        <a href="/shoutouts">Shoutouts</a>
       </nav>
-      <p>Built by <a href="https://molty.me" target="_blank" rel="noopener">Molty</a> 🦞, a space lobster AI with a <a href="https://soul.md" target="_blank" rel="noopener">soul</a>, by <a href="https://steipete.me" target="_blank" rel="noopener">Peter Steinberger</a> & <a href="https://github.com/openclaw/openclaw#community" target="_blank" rel="noopener">community</a>.</p>
+      <p>Built by <a href="https://steipete.me">Peter Steinberger</a> & <a href="https://github.com/openclaw/openclaw#community">community</a></p>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    });
+  </script>
 </Layout>
 
 <style>
-  /* Starfield Background */
-  .stars {
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
-      radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.4), transparent),
-      radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.7), transparent),
-      radial-gradient(2px 2px at 200px 60px, rgba(0,229,204,0.6), transparent),
-      radial-gradient(1px 1px at 250px 150px, rgba(255,255,255,0.5), transparent),
-      radial-gradient(2px 2px at 300px 40px, rgba(255,77,77,0.4), transparent);
-    background-size: 350px 200px;
-    animation: twinkle 8s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 40px;
+  }
+  .nav-logo { display: flex; }
+  .nav-logo .logo { height: 28px; width: auto; }
+  .theme-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--fg-muted);
+    display: flex;
+    transition: all 0.3s ease;
+  }
+  .theme-btn:hover {
+    color: var(--fg);
+    transform: rotate(15deg);
+  }
+  .theme-btn:active {
+    transform: scale(0.9);
   }
 
-  @keyframes twinkle {
-    0% { opacity: 0.4; }
-    100% { opacity: 0.7; }
-  }
-
-  .nebula {
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(255, 77, 77, 0.12), transparent 50%),
-      radial-gradient(ellipse 60% 60% at 80% 30%, rgba(0, 229, 204, 0.08), transparent 50%),
-      radial-gradient(ellipse 90% 70% at 50% 90%, rgba(255, 77, 77, 0.06), transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  .dark-logo { display: none; }
+  :global([data-theme="dark"]) .light-logo { display: none; }
+  :global([data-theme="dark"]) .dark-logo { display: block; }
+  .theme-btn .moon { display: none; }
+  :global([data-theme="dark"]) .theme-btn .sun { display: none; }
+  :global([data-theme="dark"]) .theme-btn .moon { display: block; }
 
   .container {
-    position: relative;
-    z-index: 1;
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 40px 24px;
-    min-height: 100vh;
+    padding: 0 24px 60px;
   }
 
-  .hero {
+  .header {
     text-align: center;
-    margin-bottom: 48px;
-    animation: fadeInUp 0.6s ease-out;
+    padding: 40px 0;
   }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .back-link {
+  .back {
     display: inline-block;
-    margin-bottom: 24px;
-    color: var(--coral-bright);
+    color: var(--fg-muted);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
+    font-size: 14px;
+    margin-bottom: 20px;
   }
-
-  .back-link:hover {
-    color: var(--cyan-bright);
+  .back:hover { color: var(--accent); }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
   }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--coral-bright) 50%, var(--cyan-bright) 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 16px;
-  }
-
-  .description {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
+  .header p {
+    color: var(--fg-soft);
   }
 
   .section {
-    margin-bottom: 56px;
-    animation: fadeInUp 0.6s ease-out;
+    margin-bottom: 40px;
   }
-
-  .section-title {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
+  .section h2 {
+    font-size: 18px;
     font-weight: 600;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    margin-bottom: 4px;
   }
-
-  .claw-accent {
-    color: var(--coral-bright);
-    font-weight: 700;
-  }
-
   .section-desc {
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    font-size: 0.95rem;
-    line-height: 1.5;
+    color: var(--fg-muted);
+    font-size: 14px;
+    margin-bottom: 16px;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  @media (min-width: 640px) {
-    .grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .grid-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .grid-2 {
-      grid-template-columns: repeat(2, 1fr);
-      max-width: 500px;
-    }
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
   }
 
   .card {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
     text-align: center;
-    padding: 24px 16px;
-    border-radius: 16px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.6);
-    backdrop-filter: blur(12px);
     text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: inherit;
+    transition: border-color 0.15s ease;
   }
-
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent, var(--coral-bright));
-    box-shadow: 0 12px 40px color-mix(in srgb, var(--accent, var(--coral-bright)) 20%, transparent);
+  .card:hover { border-color: var(--fg-muted); }
+  .card :global(svg) {
+    width: 28px;
+    height: 28px;
   }
-
-  .showcase-card {
-    border-style: dashed;
-  }
-
-  .showcase-link {
-    color: var(--coral-bright);
-    text-decoration: none;
-    font-size: 0.9rem;
+  .card span {
+    font-size: 13px;
     font-weight: 500;
-    transition: color 0.2s ease;
   }
 
-  .showcase-link:hover {
-    color: var(--cyan-bright);
+  .cta, .clawhub {
+    text-align: center;
+    padding: 40px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    margin-bottom: 24px;
   }
-
-  .showcase-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent, var(--coral-bright));
-    box-shadow: 0 12px 40px color-mix(in srgb, var(--accent, var(--coral-bright)) 20%, transparent);
+  .cta h2, .clawhub h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
   }
-
-  .card-icon {
-    display: flex;
-    align-items: center;
+  .cta p, .clawhub p {
+    color: var(--fg-soft);
+    margin-bottom: 20px;
+  }
+  .btn {
+    display: inline-flex;
     justify-content: center;
-    margin-bottom: 12px;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-  }
-
-  .card-icon :global(svg) {
-    width: 32px;
-    height: 32px;
-  }
-
-  .card-name {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-
-  .card-desc {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    line-height: 1.4;
-  }
-
-  .cta-section {
-    text-align: center;
-    padding: 48px 24px;
-    border-radius: 20px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.6);
-    backdrop-filter: blur(12px);
-    margin-bottom: 40px;
-  }
-
-  .cta-title {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .cta-desc {
-    color: var(--text-muted);
-    margin-bottom: 24px;
-  }
-
-  .cta-button {
-    display: inline-block;
-    padding: 14px 32px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--coral-bright), var(--coral-dark));
-    color: white;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1rem;
+    align-items: center;
+    padding: 14px 24px;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 400;
     text-decoration: none;
-    transition: all 0.25s ease;
-    box-shadow: 0 4px 16px rgba(255, 77, 77, 0.3);
+    background: #F70713;
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
   }
-
-  .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(255, 77, 77, 0.4);
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 13, 0.45) 0%, rgba(255, 0, 13, 0.9) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
   }
-
-  .clawhub-cta {
-    text-align: center;
-    padding: 48px 24px;
-    border-radius: 20px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.6);
-    backdrop-filter: blur(12px);
-    margin-bottom: 40px;
+  :global([data-theme="dark"]) .btn::before {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 100, 100, 0.9) 0%, rgba(247, 7, 19, 1) 100%);
   }
-
-  .clawhub-title {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 8px;
+  .btn:hover::before {
+    opacity: 1;
   }
-
-  .clawhub-desc {
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+  .btn-secondary {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg);
   }
-
-  .clawhub-button {
-    display: inline-block;
-    padding: 14px 32px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--cyan-bright), var(--cyan-mid));
-    color: var(--bg-deep);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1rem;
-    text-decoration: none;
-    transition: all 0.25s ease;
-    box-shadow: 0 4px 16px rgba(0, 229, 204, 0.3);
+  .btn-secondary::before {
+    display: none;
   }
-
-  .clawhub-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 229, 204, 0.4);
+  :global([data-theme="dark"]) .btn-secondary {
+    background: transparent;
+    border-color: var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-soft);
+    border-color: var(--fg-muted);
   }
 
   .footer {
     text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    padding-top: 24px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
   }
-
-  .footer-nav {
+  .footer nav {
     display: flex;
+    gap: 20px;
     justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    font-size: 0.95rem;
+    margin-bottom: 12px;
   }
-
-  .footer-separator {
-    color: var(--text-muted);
-  }
-
-  .footer a {
-    color: var(--coral-bright);
+  .footer nav a {
+    color: var(--fg-soft);
     text-decoration: none;
-    transition: color 0.2s ease;
+    font-size: 14px;
+  }
+  .footer nav a:hover { color: var(--fg); }
+  .footer p {
+    font-size: 13px;
+    color: var(--fg-muted);
+  }
+  .footer p a {
+    color: var(--accent);
+    text-decoration: none;
   }
 
-  .footer a:hover {
-    color: var(--cyan-bright);
-  }
-
-  @media (max-width: 480px) {
-    .container {
-      padding: 24px 16px;
-    }
-
-    .grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .card {
-      padding: 16px 12px;
-    }
-
-    .card-icon {
-      font-size: 2rem;
-    }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>

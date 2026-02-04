@@ -1,424 +1,300 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import showcaseData from '../data/showcase.json';
-
-// Use JSON order directly (pre-sorted into uniform rows: SHORT, MED, LONG groups)
-const sortedShowcase = showcaseData;
-
-const categoryLabels: Record<string, string> = {
-  'power-user': '🚀 Power User',
-  'automation': '⚡ Automation',
-  'productivity': '📋 Productivity',
-  'integration': '🔗 Integration',
-  'developer': '💻 Developer',
-  'personal': '👤 Personal',
-  'family': '👨‍👩‍👧 Family',
-  'smart-home': '🏠 Smart Home',
-};
 ---
 
 <Layout title="Showcase — What People Are Building with OpenClaw">
-  <div class="stars"></div>
-  <div class="nebula"></div>
+  <nav class="nav">
+    <a href="/" class="nav-logo">
+      <img src="/logo.png" alt="OpenClaw" class="logo light-logo" />
+      <img src="/logo-dark.png" alt="OpenClaw" class="logo dark-logo" />
+    </a>
+    <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+      <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </nav>
 
   <main class="container">
     <header class="header">
-      <a href="/" class="back-link">← Back to home</a>
-      <h1 class="title">
-        <span class="claw-accent">⟩</span> What People Are Building
-      </h1>
-      <p class="subtitle">Real projects, real automation, real magic.</p>
+      <a href="/" class="back">&larr; Home</a>
+      <h1>What People Are Building</h1>
+      <p>Real projects, real automation, real results.</p>
     </header>
 
-    <div class="showcase-grid">
-      {sortedShowcase.map((item) => (
-        <a href={`https://x.com/${item.author}/status/${item.id}`} target="_blank" rel="noopener" class="showcase-card">
+    <div class="grid">
+      {showcaseData.map((item) => (
+        <a href={`https://x.com/${item.author}/status/${item.id}`} target="_blank" rel="noopener" class="card">
           <div class="card-header">
-            <img
-              src={`https://unavatar.io/x/${item.author}`}
-              alt={item.author}
-              class="avatar"
-              loading="lazy"
-            />
-            <div class="author-info">
-              <span class="author-name">@{item.author}</span>
-              <span class="category-tag">{categoryLabels[item.category] || item.category}</span>
-            </div>
-            <span class="likes">❤️ {item.likes}</span>
+            <img src={`https://unavatar.io/x/${item.author}`} alt={item.author} loading="lazy" />
+            <span class="author">@{item.author}</span>
+            <svg class="x-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </div>
           <p class="quote">{item.quote}</p>
           {item.images && item.images.length > 0 && (
             <div class="images">
               {item.images.map((img: string) => (
-                <img src={img} alt="Screenshot" class="tweet-image" loading="lazy" />
+                <img src={img} alt="Screenshot" loading="lazy" />
               ))}
             </div>
           )}
-          <span class="view-link">View on X →</span>
         </a>
       ))}
     </div>
 
-    <section class="cta-section">
-      <h2 class="cta-title">Built something cool?</h2>
-      <p class="cta-desc">Share your OpenClaw creation with the community</p>
+    <section class="cta">
+      <h2>Built something cool?</h2>
+      <p>Share your creation with the community</p>
       <div class="cta-buttons">
-        <a href="https://twitter.com/intent/tweet?text=Check%20out%20what%20I%20built%20with%20%40openclaw%21" target="_blank" rel="noopener" class="cta-btn cta-primary">Share on X</a>
-        <a href="https://clawhub.com" target="_blank" rel="noopener" class="cta-btn cta-hub">Browse Skills</a>
-        <a href="https://discord.com/invite/clawd" target="_blank" rel="noopener" class="cta-btn cta-secondary">Join Discord</a>
+        <a href="https://twitter.com/intent/tweet?text=Check%20out%20what%20I%20built%20with%20%40openclaw%21" target="_blank" class="btn btn-primary">Share on X</a>
+        <a href="https://discord.com/invite/clawd" target="_blank" class="btn btn-secondary">Join Discord</a>
       </div>
     </section>
 
-    <p class="more-examples">
-      Looking for more? Check out <a href="https://docs.openclaw.ai/start/showcase" target="_blank" rel="noopener">even more examples in our docs</a> →
-    </p>
-
     <footer class="footer">
-      <nav class="footer-nav">
+      <nav>
         <a href="/">Home</a>
-        <span class="footer-separator">·</span>
         <a href="/blog">Blog</a>
-        <span class="footer-separator">·</span>
-        <a href="/shoutouts">Shoutouts</a>
-        <span class="footer-separator">·</span>
         <a href="/integrations">Integrations</a>
       </nav>
-      <p>Built by <a href="https://molty.me" target="_blank" rel="noopener">Molty</a> 🦞</p>
+      <p>Built by <a href="https://steipete.me">Peter Steinberger</a> & <a href="https://github.com/openclaw/openclaw#community">community</a></p>
     </footer>
   </main>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    });
+  </script>
 </Layout>
 
 <style>
-  .stars {
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
-      radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
-      radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.4), transparent),
-      radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.7), transparent),
-      radial-gradient(2px 2px at 200px 60px, rgba(0,229,204,0.6), transparent),
-      radial-gradient(1px 1px at 250px 150px, rgba(255,255,255,0.5), transparent),
-      radial-gradient(2px 2px at 300px 40px, rgba(255,77,77,0.4), transparent);
-    background-size: 350px 200px;
-    animation: twinkle 8s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 40px;
+  }
+  .nav-logo { display: flex; }
+  .nav-logo .logo { height: 28px; width: auto; }
+  .theme-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--fg-muted);
+    display: flex;
+    transition: all 0.3s ease;
+  }
+  .theme-btn:hover {
+    color: var(--fg);
+    transform: rotate(15deg);
+  }
+  .theme-btn:active {
+    transform: scale(0.9);
   }
 
-  @keyframes twinkle {
-    0% { opacity: 0.4; }
-    100% { opacity: 0.7; }
-  }
-
-  .nebula {
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(255, 77, 77, 0.12), transparent 50%),
-      radial-gradient(ellipse 60% 60% at 80% 30%, rgba(0, 229, 204, 0.08), transparent 50%),
-      radial-gradient(ellipse 90% 70% at 50% 90%, rgba(255, 77, 77, 0.06), transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  .dark-logo { display: none; }
+  :global([data-theme="dark"]) .light-logo { display: none; }
+  :global([data-theme="dark"]) .dark-logo { display: block; }
+  .theme-btn .moon { display: none; }
+  :global([data-theme="dark"]) .theme-btn .sun { display: none; }
+  :global([data-theme="dark"]) .theme-btn .moon { display: block; }
 
   .container {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 40px 24px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    padding: 0 24px 60px;
   }
 
   .header {
     text-align: center;
-    margin-bottom: 48px;
-    animation: fadeInUp 0.6s ease-out;
+    padding: 40px 0;
   }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .back-link {
+  .back {
     display: inline-block;
-    margin-bottom: 24px;
-    color: var(--text-muted);
+    color: var(--fg-muted);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .back:hover { color: var(--accent); }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .header p {
+    color: var(--fg-soft);
   }
 
-  .back-link:hover {
-    color: var(--coral-bright);
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--text-primary);
-  }
-
-  .claw-accent {
-    color: var(--coral-bright);
-  }
-
-  .subtitle {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-  }
-
-  .showcase-grid {
+  .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-    margin-bottom: 56px;
+    gap: 16px;
+    margin-bottom: 48px;
   }
 
-  .showcase-card {
+  .card {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 24px;
-    border-radius: 16px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.7);
-    backdrop-filter: blur(8px);
+    gap: 14px;
+    padding: 20px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
     text-decoration: none;
-    color: var(--text-primary);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--fg);
+    transition: border-color 0.15s ease;
   }
-
-  .showcase-card:hover {
-    border-color: var(--coral-bright);
-    transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(255, 77, 77, 0.15);
-  }
+  .card:hover { border-color: var(--fg-muted); }
 
   .card-header {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
-  .avatar {
-    width: 48px;
-    height: 48px;
+  .card-header > img {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     flex-shrink: 0;
-    border: 2px solid var(--border-subtle);
-    background: var(--bg-elevated);
-    object-fit: cover;
   }
-
-  .author-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  .author {
     flex: 1;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--accent);
   }
-
-  .author-name {
-    font-weight: 600;
-    color: var(--coral-bright);
-    font-size: 0.95rem;
-  }
-
-  .category-tag {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .likes {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+  .x-icon {
+    color: var(--fg-muted);
+    flex-shrink: 0;
   }
 
   .quote {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--text-secondary);
+    font-size: 14px;
+    color: var(--fg-soft);
+    line-height: 1.5;
     white-space: pre-line;
   }
 
   .images {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 8px;
-    margin-top: 12px;
   }
-
-  .tweet-image {
+  .images img {
     width: 100%;
-    height: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-subtle);
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    max-height: 160px;
     object-fit: cover;
-    max-height: 200px;
   }
 
-  .view-link {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    padding-top: 12px;
-    border-top: 1px solid var(--border-subtle);
-    transition: color 0.2s ease;
-  }
-
-  .showcase-card:hover .view-link {
-    color: var(--coral-bright);
-  }
-
-  .cta-section {
+  .cta {
     text-align: center;
-    padding: 48px 24px;
-    border-radius: 20px;
-    border: 1px solid var(--border-subtle);
-    background: rgba(10, 15, 26, 0.7);
-    backdrop-filter: blur(12px);
+    padding: 40px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 15px;
     margin-bottom: 48px;
   }
-
-  .cta-title {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
+  .cta h2 {
+    font-size: 20px;
     font-weight: 600;
-    color: var(--text-primary);
     margin-bottom: 8px;
   }
-
-  .cta-desc {
-    color: var(--text-secondary);
-    margin-bottom: 24px;
+  .cta p {
+    color: var(--fg-soft);
+    margin-bottom: 20px;
   }
-
   .cta-buttons {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     justify-content: center;
-    flex-wrap: wrap;
   }
-
-  .cta-btn {
+  .btn {
     display: inline-flex;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.95rem;
+    padding: 14px 24px;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 400;
     text-decoration: none;
-    transition: all 0.25s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
   }
-
-  .cta-primary {
-    background: linear-gradient(135deg, var(--coral-bright) 0%, var(--coral-dark) 100%);
-    color: white;
-    box-shadow: 0 4px 20px rgba(255, 77, 77, 0.3);
+  .btn-primary {
+    background: #F70713;
+    color: #FFFFFF;
+    border: none;
   }
-
-  .cta-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(255, 77, 77, 0.4);
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 13, 0.45) 0%, rgba(255, 0, 13, 0.9) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: inherit;
   }
-
-  .cta-hub {
-    background: rgba(0, 229, 204, 0.15);
-    border: 1px solid var(--cyan-bright);
-    color: var(--cyan-bright);
+  :global([data-theme="dark"]) .btn-primary::before {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(255, 100, 100, 0.9) 0%, rgba(247, 7, 19, 1) 100%);
   }
-
-  .cta-hub:hover {
-    background: rgba(0, 229, 204, 0.25);
-    transform: translateY(-2px);
+  .btn-primary:hover::before {
+    opacity: 1;
   }
-
-  .cta-secondary {
-    background: rgba(88, 101, 242, 0.15);
-    border: 1px solid #5865F2;
-    color: #5865F2;
+  .btn-secondary {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg);
   }
-
-  .cta-secondary:hover {
-    background: rgba(88, 101, 242, 0.25);
-    transform: translateY(-2px);
+  .btn-secondary::before {
+    display: none;
   }
-
-  .more-examples {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 32px;
+  :global([data-theme="dark"]) .btn-secondary {
+    background: transparent;
+    border-color: var(--border);
   }
-
-  .more-examples a {
-    color: var(--cyan-bright);
-    text-decoration: none;
-  }
-
-  .more-examples a:hover {
-    text-decoration: underline;
+  .btn-secondary:hover {
+    background: var(--bg-soft);
+    border-color: var(--fg-muted);
   }
 
   .footer {
-    margin-top: auto;
-    padding-top: 48px;
     text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
   }
-
-  .footer-nav {
+  .footer nav {
     display: flex;
+    gap: 20px;
     justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
-
-  .footer-separator {
-    color: var(--text-muted);
+  .footer nav a {
+    color: var(--fg-soft);
+    text-decoration: none;
+    font-size: 14px;
   }
-
-  .footer a {
-    color: var(--coral-bright);
+  .footer nav a:hover { color: var(--fg); }
+  .footer p {
+    font-size: 13px;
+    color: var(--fg-muted);
+  }
+  .footer p a {
+    color: var(--accent);
     text-decoration: none;
   }
 
-  .footer a:hover {
-    color: var(--cyan-bright);
-  }
-
-  @media (max-width: 480px) {
-    .container {
-      padding: 24px 16px;
-    }
-
-    .showcase-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .showcase-card {
-      padding: 20px;
-    }
-
-    .cta-buttons {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .cta-btn {
-      width: 100%;
-      max-width: 280px;
-      justify-content: center;
-    }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .cta-buttons { flex-direction: column; align-items: center; }
   }
 </style>

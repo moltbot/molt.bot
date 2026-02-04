@@ -5,7 +5,6 @@ date: 2026-01-29
 author: "Peter Steinberger"
 authorHandle: "steipete"
 tags: ["announcement", "roadmap"]
-image: "/blog/openclaw-logo-text.png"
 ---
 
 Two months ago, I hacked together a weekend project. What started as "WhatsApp Relay" now has over 100,000 GitHub stars and drew 2 million visitors in a single week.

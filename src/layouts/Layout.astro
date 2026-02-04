@@ -16,7 +16,7 @@ const { title, description = "OpenClaw — The AI that actually does things. You
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -37,43 +37,56 @@ const { title, description = "OpenClaw — The AI that actually does things. You
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://openclaw.ai/og-image.png" />
 
-    <!-- Fonts: Clash Display + Satoshi from Fontshare -->
-    <link rel="preconnect" href="https://api.fontshare.com">
-    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
     <title>{title}</title>
 
+    <!-- Theme Script -->
+    <script is:inline>
+      (function() {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <style is:global>
       :root {
-        /* Deep space palette with lobster accents */
-        --bg-deep: #050810;
-        --bg-surface: #0a0f1a;
-        --bg-elevated: #111827;
+        --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
 
-        /* Lobster coral spectrum */
-        --coral-bright: #ff4d4d;
-        --coral-mid: #e63946;
-        --coral-dark: #991b1b;
+        --accent: #F70713;
+        --accent-hover: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 13, 0.45) 0%, rgba(255, 0, 13, 0.9) 100%);
+        --accent-soft: rgba(247, 7, 19, 0.1);
+      }
 
-        /* Bioluminescent cyan */
-        --cyan-bright: #00e5cc;
-        --cyan-mid: #14b8a6;
-        --cyan-glow: rgba(0, 229, 204, 0.4);
+      /* Light mode */
+      :root, [data-theme="light"] {
+        --bg: #ffffff;
+        --bg-soft: #f9fafb;
+        --bg-muted: #f3f4f6;
+        --fg: #111827;
+        --fg-soft: #4b5563;
+        --fg-muted: #9ca3af;
+        --border: #e5e7eb;
+        --border-soft: #f3f4f6;
+        --code-bg: #f3f4f6;
+      }
 
-        /* Text */
-        --text-primary: #f0f4ff;
-        --text-secondary: #8892b0;
-        --text-muted: #5a6480;
-
-        /* Borders */
-        --border-subtle: rgba(136, 146, 176, 0.15);
-        --border-accent: rgba(255, 77, 77, 0.3);
-
-        /* Fonts */
-        --font-display: 'Clash Display', system-ui, sans-serif;
-        --font-body: 'Satoshi', system-ui, sans-serif;
-        --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+      /* Dark mode */
+      [data-theme="dark"] {
+        --bg: #0f1117;
+        --bg-soft: #151921;
+        --bg-muted: #1e2330;
+        --fg: #f9fafb;
+        --fg-soft: #d1d5db;
+        --fg-muted: #6b7280;
+        --border: #262f3d;
+        --border-soft: #1e2330;
+        --code-bg: #1e2330;
       }
 
       *, *::before, *::after {
@@ -83,22 +96,43 @@ const { title, description = "OpenClaw — The AI that actually does things. You
       }
 
       html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        font-family: var(--font-body);
-        background: var(--bg-deep);
-        color: var(--text-primary);
-        line-height: 1.6;
-        min-height: 100vh;
+        font-size: 16px;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
 
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
       ::selection {
-        background: var(--coral-bright);
-        color: var(--bg-deep);
+        background: var(--accent);
+        color: white;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, ::before, ::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
