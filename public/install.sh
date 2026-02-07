@@ -582,6 +582,26 @@ check_git() {
     return 1
 }
 
+check_build_tools() {
+    local missing=()
+
+    if ! command -v make &> /dev/null; then
+        missing+=("make")
+    fi
+
+    if ! command -v cmake &> /dev/null; then
+        missing+=("cmake")
+    fi
+
+    if (( ${#missing[@]} )); then
+        echo -e "${ERROR}Error: Missing required build tools: ${missing[*]}${NC}"
+        echo "Please install them and re-run the installer."
+        exit 1
+    fi
+
+    echo -e "${SUCCESS}✓${NC} Build tools found (make, cmake)"
+}
+
 is_root() {
     [[ "$(id -u)" -eq 0 ]]
 }
@@ -1184,6 +1204,9 @@ EOF
     fi
     local should_open_dashboard=false
     local skip_onboard=false
+
+    # Fail early if required build tools are missing (before any npm commands)
+    check_build_tools
 
     # Step 1: Homebrew (macOS only)
     install_homebrew
