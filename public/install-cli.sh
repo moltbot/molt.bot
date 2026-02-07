@@ -9,6 +9,9 @@ OPENCLAW_VERSION="${OPENCLAW_VERSION:-latest}"
 NODE_VERSION="${OPENCLAW_NODE_VERSION:-22.22.0}"
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
 NPM_LOGLEVEL="${OPENCLAW_NPM_LOGLEVEL:-error}"
+INSTALL_METHOD="${OPENCLAW_INSTALL_METHOD:-npm}"
+GIT_DIR="${OPENCLAW_GIT_DIR:-${HOME}/openclaw}"
+GIT_UPDATE="${OPENCLAW_GIT_UPDATE:-1}"
 JSON=0
 RUN_ONBOARD=0
 SET_NPM_PREFIX=0
@@ -16,17 +19,25 @@ SET_NPM_PREFIX=0
 print_usage() {
   cat <<EOF
 Usage: install-cli.sh [options]
-  --json                Emit NDJSON events (no human output)
-  --prefix <path>        Install prefix (default: ~/.openclaw)
-  --version <ver>        OpenClaw version (default: latest)
-  --node-version <ver>   Node version (default: 22.22.0)
-  --onboard              Run "openclaw onboard" after install
-  --no-onboard           Skip onboarding (default)
-  --set-npm-prefix       Force npm prefix to ~/.npm-global if current prefix is not writable (Linux)
+  --json                              Emit NDJSON events (no human output)
+  --prefix <path>                     Install prefix (default: ~/.openclaw)
+  --install-method, --method npm|git  Install via npm (default) or from a git checkout
+  --npm                               Shortcut for --install-method npm
+  --git, --github                     Shortcut for --install-method git
+  --git-dir, --dir <path>             Checkout directory (default: ~/openclaw)
+  --version <ver>                     OpenClaw version (default: latest)
+  --node-version <ver>                Node version (default: 22.22.0)
+  --onboard                           Run "openclaw onboard" after install
+  --no-onboard                        Skip onboarding (default)
+  --set-npm-prefix                    Force npm prefix to ~/.npm-global if current prefix is not writable (Linux)
 
 Environment variables:
   SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
   OPENCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
+  OPENCLAW_INSTALL_METHOD=git|npm
+  OPENCLAW_VERSION=latest|next|<semver>
+  OPENCLAW_GIT_DIR=...
+  OPENCLAW_GIT_UPDATE=0|1
 EOF
 }
 
@@ -194,6 +205,26 @@ parse_args() {
         NODE_VERSION="$2"
         shift 2
         ;;
+      --install-method|--method)
+        INSTALL_METHOD="$2"
+        shift 2
+        ;;
+      --npm)
+        INSTALL_METHOD="npm"
+        shift
+        ;;
+      --git|--github)
+        INSTALL_METHOD="git"
+        shift
+        ;;
+      --git-dir|--dir)
+        GIT_DIR="$2"
+        shift 2
+        ;;
+      --no-git-update)
+        GIT_UPDATE=0
+        shift
+        ;;
       --onboard)
         RUN_ONBOARD=1
         shift
@@ -310,6 +341,27 @@ install_node() {
   emit_json "{\"event\":\"step\",\"name\":\"node\",\"status\":\"ok\",\"version\":\"${NODE_VERSION}\"}"
 }
 
+ensure_pnpm() {
+  if command -v pnpm >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if [[ -x "$(node_dir)/bin/corepack" ]]; then
+    emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"start\",\"method\":\"corepack\"}"
+    log "Installing pnpm via Corepack..."
+    "$(node_dir)/bin/corepack" enable >/dev/null 2>&1 || true
+    "$(node_dir)/bin/corepack" prepare pnpm@10 --activate
+    emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"ok\"}"
+    return 0
+  fi
+
+  emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"start\",\"method\":\"npm\"}"
+  log "Installing pnpm via npm..."
+  SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" pnpm@10
+  emit_json "{\"event\":\"step\",\"name\":\"pnpm\",\"status\":\"ok\"}"
+  return 0
+}
+
 fix_npm_prefix_if_needed() {
   # only meaningful on Linux, non-root installs
   if [[ "$(os_detect)" != "linux" ]]; then
@@ -376,6 +428,59 @@ EOF
   emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"ok\",\"version\":\"${requested}\"}"
 }
 
+install_openclaw_from_git() {
+  local repo_dir="$1"
+  local repo_url="https://github.com/openclaw/openclaw.git"
+
+  emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"start\",\"method\":\"git\",\"repo\":\"${repo_url//\"/\\\"}\"}"
+  if [[ -d "$repo_dir/.git" ]]; then
+    log "Installing Openclaw from git checkout: ${repo_dir}"
+  else
+    log "Installing Openclaw from GitHub (${repo_url})..."
+  fi
+
+  ensure_git
+  ensure_pnpm
+
+  if [[ -d "$repo_dir/.git" ]]; then
+    :
+  elif [[ -d "$repo_dir" ]]; then
+    if [[ -z "$(ls -A "$repo_dir" 2>/dev/null || true)" ]]; then
+      git clone "$repo_url" "$repo_dir"
+    else
+      fail "Git install dir exists but is not a git repo: ${repo_dir}"
+    fi
+  else
+    git clone "$repo_url" "$repo_dir"
+  fi
+
+  if [[ "$GIT_UPDATE" == "1" ]]; then
+    if [[ -z "$(git -C "$repo_dir" status --porcelain 2>/dev/null || true)" ]]; then
+      git -C "$repo_dir" pull --rebase || true
+    else
+      log "Repo is dirty; skipping git pull"
+    fi
+  fi
+
+  cleanup_legacy_submodules "$repo_dir"
+
+  SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" pnpm -C "$repo_dir" install
+
+  if ! pnpm -C "$repo_dir" ui:build; then
+    log "UI build failed; continuing (CLI may still work)"
+  fi
+  pnpm -C "$repo_dir" build
+
+  mkdir -p "${PREFIX}/bin"
+  cat > "${PREFIX}/bin/openclaw" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+exec "${PREFIX}/tools/node/bin/node" "${repo_dir}/dist/entry.js" "\$@"
+EOF
+  chmod +x "${PREFIX}/bin/openclaw"
+  emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"ok\",\"method\":\"git\"}"
+}
+
 resolve_openclaw_version() {
   local version=""
   if [[ -x "${PREFIX}/bin/openclaw" ]]; then
@@ -397,11 +502,17 @@ main() {
   export PATH
 
   install_node
-  ensure_git
-  if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
-    fix_npm_prefix_if_needed
+  if [[ "$INSTALL_METHOD" == "git" ]]; then
+    install_openclaw_from_git "$GIT_DIR"
+  elif [[ "$INSTALL_METHOD" == "npm" ]]; then
+    ensure_git
+    if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
+      fix_npm_prefix_if_needed
+    fi
+    install_openclaw
+  else
+    fail "Unknown install method: ${INSTALL_METHOD} (use npm or git)"
   fi
-  install_openclaw
 
   local installed_version
   installed_version="$(resolve_openclaw_version)"
