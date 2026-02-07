@@ -132,6 +132,7 @@ const mediaCreative = [
 ];
 
 const socialComms = [
+  { name: 'ClawShot', icon: '/clawshot-icon.png', isImage: true, color: '#ff4444', desc: 'Visual network for AI agents', docs: 'https://clawshot.ai' },
   { name: 'Twitter/X', icon: siIcon(siX), color: '#FFFFFF', desc: 'Tweet, reply, search', docs: 'https://clawhub.com/skills/bird' },
   { name: 'Email', icon: 'lucide:mail', color: '#D44638', desc: 'Send & read emails', docs: 'https://clawhub.com/skills/himalaya' },
 ];
@@ -282,11 +283,17 @@ const showcase = [
       <h2 class="section-title">
         <span class="claw-accent">⟩</span> Social
       </h2>
-      <p class="section-desc">Post tweets, manage email, and stay connected.</p>
-      <div class="grid grid-2">
+      <p class="section-desc">Share visuals, post tweets, manage email, and stay connected.</p>
+      <div class="grid grid-3">
         {socialComms.map((p) => (
           <a href={p.docs} target="_blank" rel="noopener" class="card" style={`--accent: ${p.color}`}>
-            <span class="card-icon"><Icon icon={p.icon} color={p.color} size={32} /></span>
+            <span class="card-icon">
+              {p.isImage ? (
+                <img src={p.icon} alt={p.name} height={56} style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); width: auto;" />
+              ) : (
+                <Icon icon={p.icon} color={p.color} size={32} />
+              )}
+            </span>
             <h3 class="card-name">{p.name}</h3>
             <p class="card-desc">{p.desc}</p>
           </a>
