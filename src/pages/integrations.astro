@@ -15,6 +15,24 @@ import {
 // Helper to create SVG from simple-icons
 const siIcon = (icon: any) => icon.path;
 
+// MiniMax custom icon (wave form logo with gradient)
+const minimaxIcon = {
+  viewBox: '0 0 680 572',
+  defs: {
+    linearGradients: [{
+      id: 'minimax-grad',
+      x1: '0%', y1: '0%', x2: '100%', y2: '0%',
+      stops: [
+        { offset: '0%', color: '#e31e80' },
+        { offset: '100%', color: '#fe6642' },
+      ],
+    }],
+  },
+  paths: [
+    { d: 'M 468 5 L 445 6 L 426 15 L 411 31 L 403 55 L 403 516 L 394 530 L 376 535 L 357 521 L 352 445 L 337 439 L 324 450 L 327 531 L 346 556 L 370 566 L 389 566 L 412 556 L 427 540 L 435 516 L 435 55 L 447 39 L 469 38 L 483 56 L 483 422 L 490 443 L 513 465 L 544 471 L 572 460 L 591 435 L 594 200 L 598 189 L 612 179 L 628 180 L 642 197 L 643 394 L 660 405 L 674 392 L 673 190 L 664 170 L 648 155 L 626 147 L 605 148 L 575 167 L 563 194 L 562 422 L 544 439 L 530 438 L 518 428 L 514 50 L 506 30 L 492 15 Z M 309 5 L 290 5 L 265 16 L 251 32 L 244 52 L 244 460 L 235 476 L 215 481 L 196 463 L 196 199 L 187 172 L 174 158 L 153 148 L 127 148 L 106 158 L 90 177 L 84 199 L 84 316 L 73 331 L 54 334 L 39 322 L 36 267 L 31 259 L 15 256 L 5 264 L 5 324 L 17 346 L 48 365 L 82 362 L 105 344 L 115 322 L 117 194 L 127 182 L 139 178 L 160 189 L 164 198 L 164 464 L 176 492 L 189 504 L 209 512 L 231 512 L 253 502 L 267 487 L 275 466 L 275 58 L 279 47 L 296 36 L 313 40 L 324 61 L 324 394 L 330 402 L 341 405 L 355 392 L 355 53 L 343 25 L 328 12 Z', fill: 'url(#minimax-grad)' },
+  ],
+};
+
 const tlonIcon = {
   viewBox: '0 0 160 160',
   paths: [
@@ -72,6 +90,7 @@ const modelProviders = [
   { name: 'Anthropic', icon: siIcon(siAnthropic), color: '#D4A574', desc: 'Claude Pro/Max + Opus 4.5', docs: 'https://docs.openclaw.ai/models' },
   { name: 'OpenAI', icon: 'lucide:bot', color: '#00A67E', desc: 'GPT-4, GPT-5, o1', docs: 'https://docs.openclaw.ai/models' },
   { name: 'Google', icon: siIcon(siGoogle), color: '#4285F4', desc: 'Gemini 2.5 Pro/Flash', docs: 'https://docs.openclaw.ai/models' },
+  { name: 'MiniMax', icon: minimaxIcon, color: '#E91E63', desc: 'MiniMax-M2.1', docs: 'https://docs.openclaw.ai/providers/minimax' },
   { name: 'xAI', icon: siIcon(siX), color: '#FFFFFF', desc: 'Grok 3 & 4', docs: 'https://docs.openclaw.ai/models' },
   { name: 'OpenRouter', icon: 'lucide:zap', color: '#6366F1', desc: 'Unified API gateway', docs: 'https://docs.openclaw.ai/models' },
   { name: 'Mistral', icon: siIcon(siMistralai), color: '#FF7000', desc: 'Mistral Large & Codestral', docs: 'https://docs.openclaw.ai/models' },
