@@ -1,8 +1,8 @@
-# clawd.bot
+# openclaw.ai
 
-Landing page for [Moltbot](https://github.com/moltbot/moltbot) — your personal AI assistant.
+Landing page for [OpenClaw](https://github.com/openclaw/openclaw) — your personal AI assistant.
 
-**Live**: [clawd.bot](https://clawd.bot)
+**Live**: [openclaw.ai](https://openclaw.ai)
 
 ## Pages
 
@@ -38,9 +38,9 @@ Automatically deployed to GitHub Pages on push to `main`.
 
 The landing page hosts installer scripts:
 
-- **macOS/Linux**: `curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash`
-- **macOS/Linux (CLI only, no onboarding)**: `curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install-cli.sh | bash`
-- **Windows**: `iwr -useb https://clawd.bot/install.ps1 | iex`
+- **macOS/Linux**: `curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash`
+- **macOS/Linux (CLI only, no onboarding)**: `curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install-cli.sh | bash`
+- **Windows**: `iwr -useb https://openclaw.ai/install.ps1 | iex`
 
 These scripts:
 1. Install Homebrew (macOS) or detect package managers (Windows)
@@ -51,6 +51,6 @@ These scripts:
 
 ## Related
 
-- [Moltbot](https://github.com/moltbot/moltbot) — Main repository
-- [Docs](https://docs.clawd.bot) — Documentation
+- [Moltbot](https://github.com/openclaw/openclaw) — Main repository
+- [Docs](https://docs.openclaw.ai) — Documentation
 - [Discord](https://discord.gg/clawd) — Community
