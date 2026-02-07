@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# Lock files (keep only bun.lock - see README)
+package-lock.json
+pnpm-lock.yaml
+
 # Build output
 dist/
 

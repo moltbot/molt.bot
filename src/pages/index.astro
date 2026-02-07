@@ -294,25 +294,18 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
     </section>
 
     <script>
-      const installCmds = {
-        npm: 'npm i -g openclaw',
-        pnpm: 'pnpm add -g openclaw'
-      };
-
+      // Windows install commands
       const windowsPsCmd = 'iwr -useb https://openclaw.ai/install.ps1 | iex';
       const windowsPsBetaCmd = '& ([scriptblock]::Create((iwr -useb https://openclaw.ai/install.ps1))) -Tag beta';
       const windowsCmdCmd = 'curl -fsSL https://openclaw.ai/install.cmd -o install.cmd && install.cmd && del install.cmd';
       const windowsCmdBetaCmd = 'curl -fsSL https://openclaw.ai/install.cmd -o install.cmd && install.cmd --tag beta && del install.cmd';
-      const osCmds = {
-        unix: "curl -fsSL https://openclaw.ai/install.sh | bash",
-        windows: windowsPsCmd
-      };
 
       const osLabels = {
         unix: 'macOS/Linux',
         windows: 'Windows'
       };
 
+      // State
       let currentPm = 'npm';
       let currentMode = 'oneliner';
       let currentHackable = 'installer';
@@ -320,11 +313,12 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
       let osPickerExpanded = false;
       let currentWinShell = 'powershell';
 
-      // Auto-detect OS
-      const isWindows = navigator.platform.toLowerCase().includes('win') ||
+      // Auto-detect OS using modern API with fallback
+      const isWindows = navigator.userAgentData?.platform === 'Windows' ||
                         navigator.userAgent.toLowerCase().includes('windows');
       let currentOs = isWindows ? 'windows' : 'unix';
 
+      // DOM Elements - cached once for performance
       const pmBtns = document.querySelectorAll('.pm-btn');
       const hackableBtns = document.querySelectorAll('.hackable-btn');
       const osBtns = document.querySelectorAll('.os-btn');
@@ -350,6 +344,12 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
       const quickCommentInstall = document.getElementById('quick-comment-install');
       const quickCommentOnboard = document.getElementById('quick-comment-onboard');
 
+      // Cached query selectors for frequently updated elements
+      const pmCmdElements = document.querySelectorAll('.pm-cmd');
+      const pmInstallElements = document.querySelectorAll('.pm-install');
+      const osCmdElements = document.querySelectorAll('.os-cmd');
+      const osCmdHackableElements = document.querySelectorAll('.os-cmd-hackable');
+
       const comments = {
         oneliner: {
           stable: "# Works everywhere. Installs everything. You're welcome. 🦞",
@@ -366,14 +366,14 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
       };
 
       function updateCommands() {
-        // Update hackable mode commands
-        document.querySelectorAll('.pm-cmd').forEach(cmd => cmd.textContent = currentPm);
+        // Update hackable mode commands using cached elements
+        pmCmdElements.forEach(cmd => cmd.textContent = currentPm);
         // Update quick mode install command (with beta support)
         const betaSuffix = currentBeta ? '@beta' : '';
         const installCmd = currentPm === 'npm'
           ? `npm i -g openclaw${betaSuffix}`
           : `pnpm add -g openclaw${betaSuffix}`;
-        document.querySelectorAll('.pm-install').forEach(cmd => cmd.textContent = installCmd);
+        pmInstallElements.forEach(cmd => cmd.textContent = installCmd);
         // Update one-liner OS command (with beta and shell support)
         let onelinerCmd;
         if (currentOs === 'unix') {
@@ -385,32 +385,35 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         } else {
           onelinerCmd = currentBeta ? windowsPsBetaCmd : windowsPsCmd;
         }
-        document.querySelectorAll('.os-cmd').forEach(cmd => cmd.textContent = onelinerCmd);
+        osCmdElements.forEach(cmd => cmd.textContent = onelinerCmd);
         // Update hackable OS command for installer mode
         const hackableOsCmd = "curl -fsSL https://openclaw.ai/install.sh | bash -s -- --install-method git";
-        document.querySelectorAll('.os-cmd-hackable').forEach(cmd => cmd.textContent = hackableOsCmd);
-        // Update OS indicator text
-        osDetected.textContent = osLabels[currentOs];
-        // Update hackable content visibility
+        osCmdHackableElements.forEach(cmd => cmd.textContent = hackableOsCmd);
+        // Update OS indicator text (null-safe)
+        if (osDetected) osDetected.textContent = osLabels[currentOs];
+        // Update hackable content visibility (null-safe)
         if (currentMode === 'hackable') {
-          hackableInstallerContent.style.display = currentHackable === 'installer' ? 'block' : 'none';
-          hackablePnpmContent.style.display = currentHackable === 'pnpm' ? 'block' : 'none';
+          if (hackableInstallerContent) hackableInstallerContent.style.display = currentHackable === 'installer' ? 'block' : 'none';
+          if (hackablePnpmContent) hackablePnpmContent.style.display = currentHackable === 'pnpm' ? 'block' : 'none';
         }
-        // Update beta button state
-        betaBtn.classList.toggle('active', currentBeta);
-        betaBtn.dataset.beta = currentBeta.toString();
-        // Update comment texts based on beta state
+        // Update beta button state (null-safe)
+        if (betaBtn) {
+          betaBtn.classList.toggle('active', currentBeta);
+          betaBtn.dataset.beta = currentBeta.toString();
+        }
+        // Update comment texts based on beta state (null-safe)
         const mode = currentBeta ? 'beta' : 'stable';
-        onelinerComment.textContent = comments.oneliner[mode];
-        quickCommentInstall.textContent = comments.quickInstall[mode];
-        quickCommentOnboard.textContent = comments.quickOnboard[mode];
+        if (onelinerComment) onelinerComment.textContent = comments.oneliner[mode];
+        if (quickCommentInstall) quickCommentInstall.textContent = comments.quickInstall[mode];
+        if (quickCommentOnboard) quickCommentOnboard.textContent = comments.quickOnboard[mode];
       }
 
       function updateVisibility() {
-        codeOneliner.style.display = currentMode === 'oneliner' ? 'block' : 'none';
-        codeQuick.style.display = currentMode === 'quick' ? 'block' : 'none';
-        codeHackable.style.display = currentMode === 'hackable' ? 'block' : 'none';
-        codeMacos.style.display = currentMode === 'macos' ? 'block' : 'none';
+        // Null-safe visibility updates
+        if (codeOneliner) codeOneliner.style.display = currentMode === 'oneliner' ? 'block' : 'none';
+        if (codeQuick) codeQuick.style.display = currentMode === 'quick' ? 'block' : 'none';
+        if (codeHackable) codeHackable.style.display = currentMode === 'hackable' ? 'block' : 'none';
+        if (codeMacos) codeMacos.style.display = currentMode === 'macos' ? 'block' : 'none';
 
         // Show OS indicator for one-liner, PM switch for quick, hackable switch for hackable, nothing for macos
         const showOsControls = currentMode === 'oneliner';
@@ -421,28 +424,32 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         // Show Windows shell toggle when Windows is selected in one-liner mode
         const showWinShellControls = showOsControls && currentOs === 'windows';
 
-        osIndicator.style.display = showOsControls && !osPickerExpanded ? 'flex' : 'none';
-        osSwitch.style.display = showOsControls && osPickerExpanded ? 'flex' : 'none';
-        winShellSwitch.style.display = showWinShellControls ? 'flex' : 'none';
-        pmSwitch.style.display = showPmControls ? 'flex' : 'none';
-        hackableSwitch.style.display = showHackableControls ? 'flex' : 'none';
-        betaSwitch.style.display = showBetaControls ? 'flex' : 'none';
+        if (osIndicator) osIndicator.style.display = showOsControls && !osPickerExpanded ? 'flex' : 'none';
+        if (osSwitch) osSwitch.style.display = showOsControls && osPickerExpanded ? 'flex' : 'none';
+        if (winShellSwitch) winShellSwitch.style.display = showWinShellControls ? 'flex' : 'none';
+        if (pmSwitch) pmSwitch.style.display = showPmControls ? 'flex' : 'none';
+        if (hackableSwitch) hackableSwitch.style.display = showHackableControls ? 'flex' : 'none';
+        if (betaSwitch) betaSwitch.style.display = showBetaControls ? 'flex' : 'none';
         // Show placeholder when no switches visible (macOS mode) to prevent layout shift
         const noSwitchesVisible = !showOsControls && !showPmControls && !showHackableControls && !showBetaControls;
-        switchPlaceholder.style.display = noSwitchesVisible ? 'block' : 'none';
+        if (switchPlaceholder) switchPlaceholder.style.display = noSwitchesVisible ? 'block' : 'none';
       }
 
-      // OS change toggle
-      osChangeBtn.addEventListener('click', () => {
-        osPickerExpanded = true;
-        updateVisibility();
-      });
+      // OS change toggle (null-safe)
+      if (osChangeBtn) {
+        osChangeBtn.addEventListener('click', () => {
+          osPickerExpanded = true;
+          updateVisibility();
+        });
+      }
 
-      // Beta toggle
-      betaBtn.addEventListener('click', () => {
-        currentBeta = !currentBeta;
-        updateCommands();
-      });
+      // Beta toggle (null-safe)
+      if (betaBtn) {
+        betaBtn.addEventListener('click', () => {
+          currentBeta = !currentBeta;
+          updateCommands();
+        });
+      }
 
       pmBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -524,57 +531,88 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
       document.querySelectorAll('.copy-line-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
           const cmdKey = btn.dataset.cmd;
-          const code = copyCommands[cmdKey]();
+          const cmdFn = copyCommands[cmdKey];
+          if (!cmdFn) return;
+          
+          const code = cmdFn();
           const copyIcon = btn.querySelector('.copy-icon');
           const checkIcon = btn.querySelector('.check-icon');
 
+          // Try modern clipboard API first, fallback to execCommand
+          let success = false;
           try {
-            await navigator.clipboard.writeText(code);
-            btn.classList.add('copied');
-            copyIcon.style.display = 'none';
-            checkIcon.style.display = 'block';
-            setTimeout(() => {
-              btn.classList.remove('copied');
-              copyIcon.style.display = 'block';
-              checkIcon.style.display = 'none';
-            }, 2000);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(code);
+              success = true;
+            } else {
+              // Fallback for older browsers or non-HTTPS
+              const textArea = document.createElement('textarea');
+              textArea.value = code;
+              textArea.style.position = 'fixed';
+              textArea.style.opacity = '0';
+              document.body.appendChild(textArea);
+              textArea.select();
+              success = document.execCommand('copy');
+              document.body.removeChild(textArea);
+            }
           } catch (err) {
             console.error('Failed to copy:', err);
+            success = false;
+          }
+
+          if (success) {
+            btn.classList.add('copied');
+            if (copyIcon) copyIcon.style.display = 'none';
+            if (checkIcon) checkIcon.style.display = 'block';
+            setTimeout(() => {
+              btn.classList.remove('copied');
+              if (copyIcon) copyIcon.style.display = 'block';
+              if (checkIcon) checkIcon.style.display = 'none';
+            }, 2000);
+          } else {
+            // Visual error feedback - brief red flash
+            btn.style.background = 'rgba(239, 68, 68, 0.3)';
+            setTimeout(() => {
+              btn.style.background = '';
+            }, 1000);
           }
         });
       });
 
-      // Easter egg: Dalek mode on lobster hover
+      // Easter egg: Dalek mode on lobster hover (null-safe)
       const lobsterIcon = document.querySelector('.lobster-icon');
       const tagline = document.getElementById('tagline');
-      const originalTagline = tagline.textContent;
-      let isAnimating = false;
+      
+      if (lobsterIcon && tagline) {
+        const originalTagline = tagline.textContent;
+        let isAnimating = false;
 
-      lobsterIcon.addEventListener('mouseenter', () => {
-        if (isAnimating) return;
-        isAnimating = true;
+        lobsterIcon.addEventListener('mouseenter', () => {
+          if (isAnimating) return;
+          isAnimating = true;
 
-        // Animate to Dalek text
-        tagline.style.transition = 'opacity 0.2s ease';
-        tagline.style.opacity = '0';
-
-        setTimeout(() => {
-          tagline.textContent = 'EXFOLIATE! EXFOLIATE!';
-          tagline.classList.add('dalek-mode');
-          tagline.style.opacity = '1';
-        }, 200);
-
-        // Revert after 2 seconds
-        setTimeout(() => {
+          // Animate to Dalek text
+          tagline.style.transition = 'opacity 0.2s ease';
           tagline.style.opacity = '0';
+
           setTimeout(() => {
-            tagline.textContent = originalTagline;
-            tagline.classList.remove('dalek-mode');
+            tagline.textContent = 'EXFOLIATE! EXFOLIATE!';
+            tagline.classList.add('dalek-mode');
             tagline.style.opacity = '1';
-            isAnimating = false;
           }, 200);
-        }, 2000);
-      });
+
+          // Revert after 2 seconds
+          setTimeout(() => {
+            tagline.style.opacity = '0';
+            setTimeout(() => {
+              tagline.textContent = originalTagline;
+              tagline.classList.remove('dalek-mode');
+              tagline.style.opacity = '1';
+              isAnimating = false;
+            }, 200);
+          }, 2000);
+        });
+      }
     </script>
 
     <!-- What It Does -->
