@@ -178,9 +178,8 @@ const categoryLabels: Record<string, string> = {
   }
 
   .showcase-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
+    column-count: 3;
+    column-gap: 20px;
     margin-bottom: 56px;
   }
 
@@ -196,6 +195,8 @@ const categoryLabels: Record<string, string> = {
     text-decoration: none;
     color: var(--text-primary);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    break-inside: avoid;
+    margin-bottom: 20px;
   }
 
   .showcase-card:hover {
@@ -399,13 +400,19 @@ const categoryLabels: Record<string, string> = {
     color: var(--cyan-bright);
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 1024px) {
+    .showcase-grid {
+      column-count: 2;
+    }
+  }
+
+  @media (max-width: 640px) {
     .container {
       padding: 24px 16px;
     }
 
     .showcase-grid {
-      grid-template-columns: 1fr;
+      column-count: 1;
     }
 
     .showcase-card {
